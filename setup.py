@@ -28,7 +28,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Ash Wilson",
     author_email='ash.wilson@rackspace.com',
-    url='https://github.com/smashwilson/sphinxwrapper',
+    url='https://github.com/deconst/sphinxwrapper',
     packages=[
         'sphinxwrapper',
     ],
@@ -36,7 +36,7 @@ setup(
                  'sphinxwrapper'},
     include_package_data=True,
     install_requires=requirements,
-    license="BSD",
+    license="Apache 2",
     zip_safe=False,
     keywords='sphinxwrapper',
     classifiers=[
