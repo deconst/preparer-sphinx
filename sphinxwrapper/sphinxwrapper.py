@@ -7,6 +7,10 @@ from sphinx.application import Sphinx
 
 
 def build(argv):
+    """
+    Invoke Sphinx with locked arguments to generate JSON content.
+    """
+
     try:
         srcdir, destdir = argv[1], argv[2]
     except IndexError:
