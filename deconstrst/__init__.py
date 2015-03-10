@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from sphinxwrapper import build
+from deconstrst import build
 
 __author__ = 'Ash Wilson'
 __email__ = 'ash.wilson@rackspace.com'
