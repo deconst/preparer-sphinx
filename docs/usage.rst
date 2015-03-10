@@ -2,6 +2,6 @@
 Usage
 ========
 
-To use sphinxwrapper in a project::
+To use deconstrst in a project::
 
-    import sphinxwrapper
+    import deconstrst
