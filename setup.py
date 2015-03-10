@@ -22,23 +22,23 @@ test_requirements = [
 ]
 
 setup(
-    name='sphinxwrapper',
+    name='deconstrst',
     version='0.1.0',
     description="Build sphinx documentation to JSON and jam it in the cloud",
     long_description=readme + '\n\n' + history,
     author="Ash Wilson",
     author_email='ash.wilson@rackspace.com',
-    url='https://github.com/deconst/sphinxwrapper',
+    url='https://github.com/deconst/renderer-rst',
     packages=[
-        'sphinxwrapper',
+        'deconstrst',
     ],
-    package_dir={'sphinxwrapper':
-                 'sphinxwrapper'},
+    package_dir={'deconstrst':
+                 'deconstrst'},
     include_package_data=True,
     install_requires=requirements,
     license="Apache 2",
     zip_safe=False,
-    keywords='sphinxwrapper',
+    keywords='deconstrst',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -53,7 +53,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'sphinxwrapper-build = sphinxwrapper:main'
+            'deconst-render-rst = deconstrst:main'
         ],
     },
     test_suite='tests',

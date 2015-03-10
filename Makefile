@@ -35,7 +35,7 @@ clean-test:
 	rm -fr htmlcov/
 
 lint:
-	flake8 sphinxwrapper tests
+	flake8 deconstrst tests
 
 test:
 	python setup.py test
@@ -44,15 +44,15 @@ test-all:
 	tox
 
 coverage:
-	coverage run --source sphinxwrapper setup.py test
+	coverage run --source deconstrst setup.py test
 	coverage report -m
 	coverage html
 	open htmlcov/index.html
 
 docs:
-	rm -f docs/sphinxwrapper.rst
+	rm -f docs/deconstrst.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ sphinxwrapper
+	sphinx-apidoc -o docs/ deconstrst
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	open docs/_build/html/index.html
