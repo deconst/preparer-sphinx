@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import sys
 from os import path
 
@@ -13,22 +14,24 @@ def build(argv):
     Invoke Sphinx with locked arguments to generate JSON content.
     """
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("source", help="Source directory.")
+    parser.add_argument("destination", help="Destination directory.")
+    parser.add_argument("-p", "--publish",
+                        help="Publish the rendered content to Cloud Files.",
+                        action="store_true")
+
+    parser.parse_args(argv)
+
     # I am a terrible person
     BUILTIN_BUILDERS['deconst'] = DeconstJSONBuilder
 
-    try:
-        srcdir, destdir = argv[1], argv[2]
-    except IndexError:
-        print("Insufficient arguments.")
-        print("Please specify source and destination directories.")
-        return 1
+    doctreedir = path.join(parser.destination, '.doctrees')
 
-    doctreedir = path.join(destdir, '.doctrees')
-
-    app = Sphinx(srcdir=srcdir, confdir=srcdir, outdir=destdir,
-                 doctreedir=doctreedir, buildername="deconst",
-                 confoverrides={}, status=sys.stdout, warning=sys.stderr,
-                 freshenv=True, warningiserror=False, tags=[], verbosity=0,
-                 parallel=1)
+    app = Sphinx(srcdir=parser.source, confdir=parser.source,
+                 outdir=parser.destination, doctreedir=doctreedir,
+                 buildername="deconst", confoverrides={}, status=sys.stdout,
+                 warning=sys.stderr, freshenv=True, warningiserror=False,
+                 tags=[], verbosity=0, parallel=1)
     app.build(True, [])
     return app.statuscode
