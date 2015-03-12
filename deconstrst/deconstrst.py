@@ -2,11 +2,22 @@
 
 import argparse
 import sys
-from os import path
+from os import path, getenv, unsetenv
 
 from builder import DeconstJSONBuilder
 from sphinx.application import Sphinx
 from sphinx.builders import BUILTIN_BUILDERS
+
+
+def yankenv(key):
+    """
+    Remove an environment variable from the environment and return the value it
+    had.
+    """
+
+    v = getenv(key)
+    unsetenv(key)
+    return v
 
 
 def build(argv):
@@ -22,6 +33,11 @@ def build(argv):
                         action="store_true")
 
     parser.parse_args(argv)
+
+    # Read and unset environment variables.
+    region = yankenv("OS_REGION")
+    username = yankenv("OS_USERNAME")
+    api_key = yankenv("OS_API_KEY")
 
     # I am a terrible person
     BUILTIN_BUILDERS['deconst'] = DeconstJSONBuilder
