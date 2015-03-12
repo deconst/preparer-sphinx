@@ -5,6 +5,8 @@ import sys
 from os import path, getenv, unsetenv
 
 from builder import DeconstJSONBuilder
+from openstack import connection
+from rackspace import user_preference
 from sphinx.application import Sphinx
 from sphinx.builders import BUILTIN_BUILDERS
 
@@ -50,4 +52,19 @@ def build(argv):
                  warning=sys.stderr, freshenv=True, warningiserror=False,
                  tags=[], verbosity=0, parallel=1)
     app.build(True, [])
-    return app.statuscode
+
+    if app.statuscode != 0 or not parser.publish:
+        return app.statuscode
+
+    pref = user_preference.UserPreferences()
+    pref.set_region(pref.ALL, region)
+
+    conn = connection.Connection(preference=pref,
+                                 auth_plugin="rackspace",
+                                 username=username,
+                                 api_key=api_key)
+
+    for container in conn.object_store.containers():
+        print(container.name)
+
+    return 0
