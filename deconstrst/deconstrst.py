@@ -16,12 +16,8 @@ def build(argv):
     # I am a terrible person
     BUILTIN_BUILDERS['deconst'] = DeconstJSONBuilder
 
-    try:
-        srcdir, destdir = argv[1], argv[2]
-    except IndexError:
-        print("Insufficient arguments.")
-        print("Please specify source and destination directories.")
-        return 1
+    # Lock source and destination to the same paths as the Makefile.
+    srcdir, destdir = '.', '_build/deconst'
 
     doctreedir = path.join(destdir, '.doctrees')
 
