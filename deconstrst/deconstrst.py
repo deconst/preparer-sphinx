@@ -63,6 +63,10 @@ def submit_files(content_store_url, dirname, names):
     Submit a directory of generated JSON files to the content store API.
     """
 
+    headers = {
+        "Content-Type": "application/json"
+    }
+
     for name in names:
         fullpath = os.path.join(dirname, name)
         if os.path.isfile(fullpath) and os.path.splitext(name)[1] == ".json":
@@ -74,6 +78,7 @@ def submit_files(content_store_url, dirname, names):
                 payload["body"] = json.load(inf)
 
             response = requests.put(content_store_url + "content",
-                                    data=json.dumps(payload))
+                                    data=json.dumps(payload),
+                                    headers=headers)
             response.raise_for_status()
             print("success")
