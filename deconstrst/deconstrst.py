@@ -17,7 +17,7 @@ def build(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--submit",
                         help="Submit results to the content store.",
-                        action="store_bool")
+                        action="store_true")
 
     args = parser.parse_args(argv[1:])
 
