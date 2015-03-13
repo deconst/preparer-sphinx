@@ -24,12 +24,25 @@ def build(argv):
                         action="store_true")
 
     args = parser.parse_args(argv[1:])
-    content_store_url = os.getenv("CONTENT_STORE")
+    content_store_url = os.getenv("CONTENT_STORE_URL")
+    content_id_base = os.getenv("CONTENT_ID_BASE")
 
-    if args.submit and not content_store_url:
-        print("Please set CONTENT_STORE if submitting results.",
-              file=sys.stderr)
-        sys.exit(1)
+    if args.submit:
+        missing = {}
+
+        if not content_store_url:
+            missing["CONTENT_STORE_URL"] = "Base URL of the content storage " \
+                "service."
+        if not content_id_base:
+            missing["CONTENT_ID_BASE"] = "Base URL used to generate IDs for " \
+                "content within this repository."
+
+        if missing:
+            print("Required environment variables are missing!",
+                  file=sys.stderr)
+            for var, meaning in missing.iteritems():
+                print("  {}\t{}".format(var, meaning), file=sys.stderr)
+            sys.exit(1)
 
     # I am a terrible person
     BUILTIN_BUILDERS['deconst'] = DeconstJSONBuilder
