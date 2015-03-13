@@ -34,7 +34,7 @@ def main():
         if missing:
             print("Required environment variables are missing!",
                   file=sys.stderr)
-            for var, meaning in missing.iteritems():
+            for var, meaning in missing.items():
                 print("  {}\t{}".format(var, meaning), file=sys.stderr)
             sys.exit(1)
         else:
