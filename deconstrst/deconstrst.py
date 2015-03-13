@@ -47,6 +47,9 @@ def build(argv):
     if app.statuscode != 0 or not args.submit:
         return app.statuscode
 
+    if not content_store_url.endswith("/"):
+        content_store_url += "/"
+
     print("submit active")
 
     return 0
