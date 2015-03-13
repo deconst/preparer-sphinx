@@ -66,38 +66,31 @@ def build(argv):
     if app.statuscode != 0 or not args.submit:
         return app.statuscode
 
-    shared = dict(content_store_url=content_store_url,
-                  content_id_base=content_id_base,
-                  basedir=destdir)
-    os.path.walk(destdir, submit_files, shared)
-    print("All generated content submitted to the content store.")
-
-    return 0
-
-
-def submit_files(shared, dirname, names):
-    """
-    Submit a directory of generated JSON files to the content store API.
-    """
-
     headers = {
         "Content-Type": "application/json"
     }
 
-    for name in names:
-        fullpath = os.path.join(dirname, name)
-        if os.path.isfile(fullpath) and os.path.splitext(name)[1] == ".json":
-            relpath = os.path.relpath(fullpath, shared["basedir"])
+    for (dirname, names, filenames) in os.walk(destdir):
+        for name in names:
+            fullpath = os.path.join(dirname, name)
+            ext = os.path.splitext(name)[1]
 
-            print("submitting [{}] ... ".format(relpath), end='')
+            if os.path.isfile(fullpath) and ext == "json":
+                relpath = os.path.relpath(fullpath, destdir)
 
-            payload = dict(id=shared["content_id_base"] + relpath)
+                print("submitting [{}] ... ".format(relpath), end='')
 
-            with open(fullpath, "r") as inf:
-                payload["body"] = json.load(inf)
+                payload = dict(id=content_id_base + relpath)
 
-            response = requests.put(shared["content_store_url"] + "content",
-                                    data=json.dumps(payload),
-                                    headers=headers)
-            response.raise_for_status()
-            print("success")
+                with open(fullpath, "r") as inf:
+                    payload["body"] = json.load(inf)
+
+                response = requests.put(content_store_url + "content",
+                                        data=json.dumps(payload),
+                                        headers=headers)
+                response.raise_for_status()
+                print("success")
+
+    print("All generated content submitted to the content store.")
+
+    return 0
