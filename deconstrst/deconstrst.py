@@ -8,7 +8,7 @@ import os
 import json
 
 import requests
-from builder import DeconstJSONBuilder
+from deconstrst.builder import DeconstJSONBuilder
 from sphinx.application import Sphinx
 from sphinx.builders import BUILTIN_BUILDERS
 
