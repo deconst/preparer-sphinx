@@ -43,6 +43,12 @@ def build(argv):
             for var, meaning in missing.iteritems():
                 print("  {}\t{}".format(var, meaning), file=sys.stderr)
             sys.exit(1)
+        else:
+            if not content_store_url.endswith("/"):
+                content_store_url += "/"
+
+            if not content_id_base.endswith("/"):
+                content_id_base += "/"
 
     # I am a terrible person
     BUILTIN_BUILDERS['deconst'] = DeconstJSONBuilder
@@ -62,16 +68,16 @@ def build(argv):
     if app.statuscode != 0 or not args.submit:
         return app.statuscode
 
-    if not content_store_url.endswith("/"):
-        content_store_url += "/"
-
-    os.path.walk(destdir, submit_files, content_store_url)
+    shared = dict(content_store_url=content_store_url,
+                  content_id_base=content_id_base,
+                  basedir=destdir)
+    os.path.walk(destdir, submit_files, shared)
     print("All generated content submitted to the content store.")
 
     return 0
 
 
-def submit_files(content_store_url, dirname, names):
+def submit_files(shared, dirname, names):
     """
     Submit a directory of generated JSON files to the content store API.
     """
@@ -83,14 +89,16 @@ def submit_files(content_store_url, dirname, names):
     for name in names:
         fullpath = os.path.join(dirname, name)
         if os.path.isfile(fullpath) and os.path.splitext(name)[1] == ".json":
-            print("submitting [{}] ... ".format(fullpath), end='')
+            relpath = os.path.relpath(fullpath, shared["basedir"])
 
-            payload = dict(id="")
+            print("submitting [{}] ... ".format(relpath), end='')
+
+            payload = dict(id=shared["content_id_base"] + relpath)
 
             with open(fullpath, "r") as inf:
                 payload["body"] = json.load(inf)
 
-            response = requests.put(content_store_url + "content",
+            response = requests.put(shared["content_store_url"] + "content",
                                     data=json.dumps(payload),
                                     headers=headers)
             response.raise_for_status()
