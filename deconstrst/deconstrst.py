@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import sys
 from os import path
 
@@ -12,6 +13,13 @@ def build(argv):
     """
     Invoke Sphinx with locked arguments to generate JSON content.
     """
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--submit",
+                        help="Submit results to the content store.",
+                        action="store_bool")
+
+    args = parser.parse_args(argv[1:])
 
     # I am a terrible person
     BUILTIN_BUILDERS['deconst'] = DeconstJSONBuilder
@@ -27,4 +35,10 @@ def build(argv):
                  freshenv=True, warningiserror=False, tags=[], verbosity=0,
                  parallel=1)
     app.build(True, [])
-    return app.statuscode
+
+    if app.statuscode != 0 or not args.submit:
+        return app.statuscode
+
+    print("submit active")
+
+    return 0
