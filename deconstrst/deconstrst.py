@@ -5,7 +5,9 @@ from __future__ import print_function
 import argparse
 import sys
 import os
+import json
 
+import requests
 from builder import DeconstJSONBuilder
 from sphinx.application import Sphinx
 from sphinx.builders import BUILTIN_BUILDERS
@@ -50,6 +52,28 @@ def build(argv):
     if not content_store_url.endswith("/"):
         content_store_url += "/"
 
-    print("submit active")
+    os.path.walk(destdir, submit_files, content_store_url)
+    print("All generated content submitted to the content store.")
 
     return 0
+
+
+def submit_files(content_store_url, dirname, names):
+    """
+    Submit a directory of generated JSON files to the content store API.
+    """
+
+    for name in names:
+        fullpath = os.path.join(dirname, name)
+        if os.path.isfile(fullpath) and os.path.splitext(name)[1] == ".json":
+            print("submitting [{}] ... ".format(fullpath), end='')
+
+            payload = dict(id="")
+
+            with open(fullpath, "r") as inf:
+                payload["body"] = json.load(inf)
+
+            response = requests.put(content_store_url + "content",
+                                    data=json.dumps(payload))
+            response.raise_for_status()
+            print("success")
