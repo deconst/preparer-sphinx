@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import argparse
 import sys
-from os import path
+import os
 
 from builder import DeconstJSONBuilder
 from sphinx.application import Sphinx
@@ -20,6 +22,12 @@ def build(argv):
                         action="store_true")
 
     args = parser.parse_args(argv[1:])
+    content_store_url = os.getenv("CONTENT_STORE")
+
+    if args.submit and not content_store_url:
+        print("Please set CONTENT_STORE if submitting results.",
+              file=sys.stderr)
+        sys.exit(1)
 
     # I am a terrible person
     BUILTIN_BUILDERS['deconst'] = DeconstJSONBuilder
@@ -27,7 +35,7 @@ def build(argv):
     # Lock source and destination to the same paths as the Makefile.
     srcdir, destdir = '.', '_build/deconst'
 
-    doctreedir = path.join(destdir, '.doctrees')
+    doctreedir = os.path.join(destdir, '.doctrees')
 
     app = Sphinx(srcdir=srcdir, confdir=srcdir, outdir=destdir,
                  doctreedir=doctreedir, buildername="deconst",
