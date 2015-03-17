@@ -28,7 +28,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Ash Wilson",
     author_email='ash.wilson@rackspace.com',
-    url='https://github.com/deconst/renderer-rst',
+    url='https://github.com/deconst/preparer-rst',
     packages=[
         'deconstrst',
     ],
@@ -53,7 +53,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'deconst-render-rst = deconstrst:main'
+            'deconst-prepare-rst = deconstrst:main'
         ],
     },
     test_suite='tests',
