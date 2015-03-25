@@ -47,9 +47,14 @@ def submit(destdir, content_store_url, content_id_base):
             if os.path.isfile(fullpath) and ext == ".json":
                 relpath = os.path.relpath(fullpath, destdir)
 
-                content_suffix = os.path.relpath(
-                    os.path.join(dirpath, base), destdir
-                )
+                if base == "index":
+                    full_suffix = dirpath
+                else:
+                    full_suffix = os.path.join(dirpath, base)
+
+                content_suffix = os.path.relpath(full_suffix, destdir)
+                content_suffix = content_suffix.rstrip("/.")
+
                 content_id = content_id_base + content_suffix
 
                 print(
