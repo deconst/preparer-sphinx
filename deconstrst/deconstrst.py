@@ -42,14 +42,22 @@ def submit(destdir, content_store_url, content_id_base):
     for (dirpath, dirnames, filenames) in os.walk(destdir):
         for name in filenames:
             fullpath = os.path.join(dirpath, name)
-            ext = os.path.splitext(name)[1]
+            base, ext = os.path.splitext(name)
 
             if os.path.isfile(fullpath) and ext == ".json":
                 relpath = os.path.relpath(fullpath, destdir)
 
-                print("submitting [{}] ... ".format(relpath), end='')
+                content_suffix = os.path.relpath(
+                    os.path.join(dirpath, base), destdir
+                )
+                content_id = content_id_base + content_suffix
 
-                payload = dict(id=content_id_base + relpath)
+                print(
+                    "submitting [{}] as [{}] ... ".format(relpath, content_id),
+                    end=''
+                )
+
+                payload = dict(id=content_id)
 
                 with open(fullpath, "r") as inf:
                     payload["body"] = json.load(inf)
