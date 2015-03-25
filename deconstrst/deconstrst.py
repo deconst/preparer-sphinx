@@ -39,17 +39,30 @@ def submit(destdir, content_store_url, content_id_base):
         "Content-Type": "application/json"
     }
 
-    for (dirname, names, filenames) in os.walk(destdir):
-        for name in names:
-            fullpath = os.path.join(dirname, name)
-            ext = os.path.splitext(name)[1]
+    for (dirpath, dirnames, filenames) in os.walk(destdir):
+        for name in filenames:
+            fullpath = os.path.join(dirpath, name)
+            base, ext = os.path.splitext(name)
 
-            if os.path.isfile(fullpath) and ext == "json":
+            if os.path.isfile(fullpath) and ext == ".json":
                 relpath = os.path.relpath(fullpath, destdir)
 
-                print("submitting [{}] ... ".format(relpath), end='')
+                if base == "index":
+                    full_suffix = dirpath
+                else:
+                    full_suffix = os.path.join(dirpath, base)
 
-                payload = dict(id=content_id_base + relpath)
+                content_suffix = os.path.relpath(full_suffix, destdir)
+                content_suffix = content_suffix.rstrip("/.")
+
+                content_id = content_id_base + content_suffix
+
+                print(
+                    "submitting [{}] as [{}] ... ".format(relpath, content_id),
+                    end=''
+                )
+
+                payload = dict(id=content_id)
 
                 with open(fullpath, "r") as inf:
                     payload["body"] = json.load(inf)
