@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import argparse
 import os
 import sys
 
@@ -12,12 +11,7 @@ __version__ = '0.1.0'
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--submit",
-                        help="Submit results to the content store.",
-                        action="store_true")
 
-    args = parser.parse_args()
     content_store_url = os.getenv("CONTENT_STORE_URL")
     content_id_base = os.getenv("CONTENT_ID_BASE")
 
