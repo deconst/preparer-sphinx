@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sh
-import re
-
 
 def _normalize(url):
     """
@@ -23,13 +20,7 @@ class Configuration:
     def __init__(self, env):
         self.content_store_url = _normalize(env.get("CONTENT_STORE_URL"))
         self.content_id_base = _normalize(env.get("CONTENT_ID_BASE"))
-        self.deployment_ref = re.compile(env.get("DEPLOY_REF",
-                                                 "refs/heads/master"))
-
-        try:
-            self.refname = sh.git("symbolic-ref", "HEAD").strip()
-        except sh.ErrorReturnCode:
-            self.refname = ""
+        self.is_primary = env.get("TRAVIS_PULL_REQUEST") == "false"
 
     def skip_submit_reasons(self):
         """
@@ -48,11 +39,8 @@ class Configuration:
                            "URL used to generate IDs for content within this "
                            "repository.")
 
-        if not self.deployment_ref.match(self.refname):
-            reasons.append(
-                "The current git ref ({}) doesn't match the DEPLOY_REF "
-                "regexp ({}).".format(self.refname,
-                                      self.deployment_ref.pattern))
+        if not self.is_primary:
+            reasons.append("This is a pull request build on Travis.")
 
         return reasons
 
