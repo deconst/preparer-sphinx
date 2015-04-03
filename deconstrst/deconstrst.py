@@ -3,6 +3,7 @@
 import sys
 import os
 import json
+import urllib
 
 import requests
 from deconstrst.builder import DeconstJSONBuilder
@@ -67,7 +68,8 @@ def submit(destdir, content_store_url, content_id_base):
                 with open(fullpath, "r") as inf:
                     payload["body"] = json.load(inf)
 
-                response = requests.put(content_store_url + "content",
+                url = content_store_url + "content/" + urllib.quote(content_id)
+                response = requests.put(url,
                                         data=json.dumps(payload),
                                         headers=headers)
                 response.raise_for_status()
