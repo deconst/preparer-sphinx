@@ -2,7 +2,6 @@
 
 import sys
 import os
-import json
 import urllib.parse
 
 import requests
@@ -63,17 +62,13 @@ def submit(destdir, content_store_url, content_id_base):
                     end=''
                 )
 
-                payload = dict(id=content_id)
-
-                with open(fullpath, "r") as inf:
-                    payload["body"] = json.load(inf)
-
                 url = content_store_url + "content/" + \
                     urllib.parse.quote(content_id, safe='')
-                response = requests.put(url,
-                                        data=json.dumps(payload),
-                                        headers=headers)
-                response.raise_for_status()
+
+                with open(fullpath, "rb") as inf:
+                    response = requests.put(url, data=inf, headers=headers)
+                    response.raise_for_status()
+
                 print("success")
 
     print("All generated content submitted to the content store.")
