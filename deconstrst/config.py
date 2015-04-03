@@ -40,7 +40,7 @@ class Configuration:
                            "repository.")
 
         if not self.is_primary:
-            reasons.append("This is a pull request build on Travis.")
+            reasons.append("This looks like a pull request build on Travis.")
 
         return reasons
 
