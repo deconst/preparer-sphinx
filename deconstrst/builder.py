@@ -10,39 +10,12 @@ from sphinx.util import jsonimpl
 from deconstrst.config import Configuration
 
 
-class DeconstJSONImpl:
-    """
-    Enhance the default JSON encoder by adding additional keys.
-    """
-
-    def dump(self, obj, fp, *args, **kwargs):
-        self._enhance(obj)
-        return jsonimpl.dump(obj, fp, *args, **kwargs)
-
-    def dumps(self, obj, *args, **kwargs):
-        self._enhance(obj)
-        return jsonimpl.dumps(obj, *args, **kwargs)
-
-    def load(self, *args, **kwargs):
-        return jsonimpl.load(*args, **kwargs)
-
-    def loads(self, *args, **kwargs):
-        return jsonimpl.loads(*args, **kwargs)
-
-    def _enhance(self, obj):
-        """
-        Add additional properties to "obj" to get them into the JSON.
-        """
-
-        obj["hello"] = "Sup"
-
-
 class DeconstJSONBuilder(JSONHTMLBuilder):
     """
     Custom Sphinx builder that generates Deconst-compatible JSON documents.
     """
 
-    implementation = DeconstJSONImpl()
+    implementation = jsonimpl
     name = 'deconst'
     out_suffix = '.json'
 
@@ -58,6 +31,20 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
 
         Also, the search indices and so on aren't necessary.
         """
+
+    def dump_context(self, context, filename):
+        """
+        Override the default serialization code to save a derived metadata
+        envelope, instead.
+        """
+
+        envelope = {
+            "body": context["body"],
+            "title": context["title"],
+            "layout_key": "default"
+        }
+
+        super().dump_context(envelope, filename)
 
     def post_process_images(self, doctree):
         """
