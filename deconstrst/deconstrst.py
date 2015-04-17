@@ -39,7 +39,7 @@ def submit(destdir, content_store_url, content_id_base):
         "Content-Type": "application/json"
     }
 
-    for (dirpath, dirnames, filenames) in os.walk(destdir):
+    for dirpath, dirnames, filenames in os.walk(destdir):
         for name in filenames:
             fullpath = os.path.join(dirpath, name)
             base, ext = os.path.splitext(name)

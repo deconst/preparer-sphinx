@@ -7,34 +7,11 @@ import requests
 from docutils import nodes
 from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
+from sphinx.config import Config
 from deconstrst.config import Configuration
 
-
-class DeconstJSONImpl:
-    """
-    Enhance the default JSON encoder by adding additional keys.
-    """
-
-    def dump(self, obj, fp, *args, **kwargs):
-        self._enhance(obj)
-        return jsonimpl.dump(obj, fp, *args, **kwargs)
-
-    def dumps(self, obj, *args, **kwargs):
-        self._enhance(obj)
-        return jsonimpl.dumps(obj, *args, **kwargs)
-
-    def load(self, *args, **kwargs):
-        return jsonimpl.load(*args, **kwargs)
-
-    def loads(self, *args, **kwargs):
-        return jsonimpl.loads(*args, **kwargs)
-
-    def _enhance(self, obj):
-        """
-        Add additional properties to "obj" to get them into the JSON.
-        """
-
-        obj["hello"] = "Sup"
+# Tell Sphinx about the deconst_default_layout key.
+Config.config_values["deconst_default_layout"] = ("default", "html")
 
 
 class DeconstJSONBuilder(JSONHTMLBuilder):
@@ -42,7 +19,7 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
     Custom Sphinx builder that generates Deconst-compatible JSON documents.
     """
 
-    implementation = DeconstJSONImpl()
+    implementation = jsonimpl
     name = 'deconst'
     out_suffix = '.json'
 
@@ -58,6 +35,32 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
 
         Also, the search indices and so on aren't necessary.
         """
+
+    def dump_context(self, context, filename):
+        """
+        Override the default serialization code to save a derived metadata
+        envelope, instead.
+        """
+
+        envelope = {
+            "body": context["body"],
+            "title": context["title"],
+            "layout_key": context["deconst_layout_key"]
+        }
+
+        super().dump_context(envelope, filename)
+
+    def handle_page(self, pagename, ctx, *args, **kwargs):
+        """
+        Override the default serialization code to save a derived metadata
+        envelope, instead.
+        """
+
+        meta = self.env.metadata[pagename]
+        ctx["deconst_layout_key"] = meta.get(
+            "deconstlayout", self.config.deconst_default_layout)
+
+        super().handle_page(pagename, ctx, *args, **kwargs)
 
     def post_process_images(self, doctree):
         """
