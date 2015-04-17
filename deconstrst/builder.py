@@ -7,7 +7,11 @@ import requests
 from docutils import nodes
 from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
+from sphinx.config import Config
 from deconstrst.config import Configuration
+
+# Tell Sphinx about the deconst_default_layout key.
+Config.config_values["deconst_default_layout"] = ("default", "html")
 
 
 class DeconstJSONBuilder(JSONHTMLBuilder):
@@ -53,7 +57,8 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
         """
 
         meta = self.env.metadata[pagename]
-        ctx["deconst_layout_key"] = meta.get("deconstlayout", "default")
+        ctx["deconst_layout_key"] = meta.get(
+            "deconstlayout", self.config.deconst_default_layout)
 
         super().handle_page(pagename, ctx, *args, **kwargs)
 
