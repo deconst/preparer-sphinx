@@ -41,10 +41,21 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
         envelope = {
             "body": context["body"],
             "title": context["title"],
-            "layout_key": "default"
+            "layout_key": context["deconst_layout_key"]
         }
 
         super().dump_context(envelope, filename)
+
+    def handle_page(self, pagename, ctx, *args, **kwargs):
+        """
+        Override the default serialization code to save a derived metadata
+        envelope, instead.
+        """
+
+        meta = self.env.metadata[pagename]
+        ctx["deconst_layout_key"] = meta.get("deconstlayout", "default")
+
+        super().handle_page(pagename, ctx, *args, **kwargs)
 
     def post_process_images(self, doctree):
         """
