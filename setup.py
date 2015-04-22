@@ -53,7 +53,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'deconst-prepare-rst = deconstrst:main'
+            'deconst-prepare-sphinx = deconstrst:main'
         ],
     },
     test_suite='tests',
