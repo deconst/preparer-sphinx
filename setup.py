@@ -28,7 +28,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Ash Wilson",
     author_email='ash.wilson@rackspace.com',
-    url='https://github.com/deconst/preparer-rst',
+    url='https://github.com/deconst/preparer-sphinx',
     packages=[
         'deconstrst',
     ],
