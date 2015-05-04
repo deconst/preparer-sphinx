@@ -10,7 +10,7 @@ It's intended to be used within a CI system to present content to the rest of bu
 
 ## Running Locally
 
-To run the asset preparer locally, you'll need to install:
+To run the Sphinx preparer locally, you'll need to install:
 
  * [Docker](https://docs.docker.com/installation/#installation) for your platform. Choose the boot2docker option for Mac OS X or Windows.
 
