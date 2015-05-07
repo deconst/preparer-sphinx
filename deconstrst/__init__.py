@@ -32,7 +32,10 @@ def main():
         print(file=sys.stderr)
         return
 
-    submit(destdir, config.content_store_url, config.content_id_base)
+    submit(destdir,
+           config.content_store_url,
+           config.content_store_apikey,
+           config.content_id_base)
 
 
 if __name__ == '__main__':
