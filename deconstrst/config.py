@@ -19,6 +19,7 @@ class Configuration:
 
     def __init__(self, env):
         self.content_store_url = _normalize(env.get("CONTENT_STORE_URL"))
+        self.content_store_apikey = env.get("CONTENT_STORE_APIKEY")
         self.content_id_base = _normalize(env.get("CONTENT_ID_BASE"))
         self.is_primary = env.get("TRAVIS_PULL_REQUEST") == "false"
 
@@ -33,6 +34,10 @@ class Configuration:
         if not self.content_store_url:
             reasons.append("CONTENT_STORE_URL is missing. It should be the "
                            "base URL of the content storage service.")
+
+        if not self.content_store_apikey:
+            reasons.append("CONTENT_STORE_APIKEY is missing. It should be a "
+                           "valid API key issued by the content service.")
 
         if not self.content_id_base:
             reasons.append("CONTENT_ID_BASE is missing. It should be the base "

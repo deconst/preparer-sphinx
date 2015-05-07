@@ -8,6 +8,7 @@ which boot2docker >/dev/null 2>&1 && {
 }
 
 CONTENT_STORE_URL=${CONTENT_STORE_URL:-http://localhost:9000/}
+CONTENT_STORE_APIKEY=${CONTENT_STORE_APIKEY:-"12345"}
 WORKDIR=${1:-$(pwd)}
 
 [ -z "${CONTENT_ID_BASE}" ] && {
@@ -24,6 +25,7 @@ EOM
 ${SUDO} docker run \
   --rm=true \
   -e CONTENT_STORE_URL=${CONTENT_STORE_URL} \
+  -e CONTENT_STORE_APIKEY=${CONTENT_STORE_APIKEY} \
   -e CONTENT_ID_BASE=${CONTENT_ID_BASE} \
   -e TRAVIS_PULL_REQUEST="false" \
   -v ${WORKDIR}:/usr/control-repo \

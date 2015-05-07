@@ -30,13 +30,14 @@ def build(srcdir, destdir):
     return app.statuscode
 
 
-def submit(destdir, content_store_url, content_id_base):
+def submit(destdir, content_store_url, content_store_apikey, content_id_base):
     """
     Submit the generated json files to the content store API.
     """
 
     headers = {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": 'deconst apikey="{}"'.format(content_store_apikey)
     }
 
     for dirpath, dirnames, filenames in os.walk(destdir):

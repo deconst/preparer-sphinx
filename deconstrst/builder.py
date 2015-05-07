@@ -77,10 +77,14 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
     def _publish_entry(self, srcfile):
         # TODO guess the content-type
 
+        auth = 'deconst apikey="{}"'.format(
+            self.deconst_config.content_store_apikey)
+        headers = {"Authorization": auth}
+
         url = self.deconst_config.content_store_url + "assets"
         basename = path.basename(srcfile)
         files = {basename: open(srcfile, 'rb')}
 
-        response = requests.post(url, files=files)
+        response = requests.post(url, files=files, headers=headers)
         response.raise_for_status()
         return response.json()[basename]
