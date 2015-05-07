@@ -18,6 +18,7 @@ Once you have Docker set up, export any desired configuration variables, run `de
 
 ```bash
 export CONTENT_STORE_URL=http://my-content-store.com:9000/
+export CONTENT_STORE_APIKEY="cd54a09f6593cb5b17177..."
 export CONTENT_ID_BASE=https://github.com/myorg/myrepo
 
 ./deconst-preparer-sphinx.sh /path/to/control-repo
@@ -28,6 +29,7 @@ export CONTENT_ID_BASE=https://github.com/myorg/myrepo
 The following values must be present in the build environment to submit assets:
 
  * `CONTENT_STORE_URL` must be the base URL of the publicly available content store service. The prepare script defaults this to one consistent with our docker-compose setups.
+ * `CONTENT_STORE_APIKEY` must be a valid API key issued by the content service. See [the content service documentation](https://github.com/deconst/content-service#post-keysnamedname) for instructions on generating an API key.
  * `CONTENT_ID_BASE` must be set to a prefix that's unique among the content repositories associated with the target deconst instance. Our convention is to use the base URL of the GitHub repository.
  * `TRAVIS_PULL_REQUEST` must be set to `"false"`. Travis automatically sets this value for your build environment on the primary branch of your repository.
 
