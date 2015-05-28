@@ -44,7 +44,7 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
 
         envelope = {
             "body": context["body"],
-            "title": context["title"],
+            "title": context["deconst_title"],
             "layout_key": context["deconst_layout_key"]
         }
 
@@ -59,6 +59,7 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
         meta = self.env.metadata[pagename]
         ctx["deconst_layout_key"] = meta.get(
             "deconstlayout", self.config.deconst_default_layout)
+        ctx["deconst_title"] = meta.get("deconsttitle", ctx["title"])
 
         super().handle_page(pagename, ctx, *args, **kwargs)
 
