@@ -35,6 +35,8 @@ The following values must be present in the build environment to submit assets:
 
 ## reStructuredText integration
 
+### Layout
+
 Sphinx doesn't natively have the concept of a per-page layout. To tell Deconst which layout to use for a specific page, add the following field to a field list that's the *first thing* within a page, along with any other [per-page metadata](http://sphinx-doc.org/markup/misc.html#file-wide-metadata) that's present:
 
 ```rst
@@ -48,3 +50,13 @@ deconst_default_layout = "default-layout-key"
 ```
 
 Finally, the preparer will fall back to `"default"` if no other key is specified.
+
+### Title
+
+Similary, you can override the `"title"` Sphinx generates for any page by specifying a `deconsttitle` per-page attribute:
+
+```rst
+:deconsttitle: The real title
+```
+
+This is especially important for your `index.rst` file, which by default generates a title of "&lt; no title &gt;".
