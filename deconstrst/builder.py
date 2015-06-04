@@ -48,6 +48,20 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
             "layout_key": context["deconst_layout_key"]
         }
 
+        n = context.get("next")
+        p = context.get("prev")
+
+        if n:
+            envelope["next"] = {
+                "url": n["link"],
+                "title": n["title"]
+            }
+        if p:
+            envelope["previous"] = {
+                "url": p["link"],
+                "title": p["title"]
+            }
+
         super().dump_context(envelope, filename)
 
     def handle_page(self, pagename, ctx, *args, **kwargs):
