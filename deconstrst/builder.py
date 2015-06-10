@@ -62,6 +62,9 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
                 "title": p["title"]
             }
 
+        if context["display_toc"]:
+            envelope["toc"] = context["toc"]
+
         super().dump_context(envelope, filename)
 
     def handle_page(self, pagename, ctx, *args, **kwargs):
