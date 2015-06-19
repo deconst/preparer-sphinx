@@ -4,6 +4,7 @@ import os
 from os import path
 
 import requests
+from urllib.parse import urljoin
 from docutils import nodes
 from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
@@ -12,6 +13,17 @@ from deconstrst.config import Configuration
 
 # Tell Sphinx about the deconst_default_layout key.
 Config.config_values["deconst_default_layout"] = ("default", "html")
+
+
+def normalize_content_id(content_id):
+    """
+    Normalize a content ID by trimming a final /.
+    """
+
+    if content_id and content_id[-1] == "/":
+        return content_id[:-1]
+    else:
+        return content_id
 
 
 class DeconstJSONBuilder(JSONHTMLBuilder):
@@ -91,6 +103,17 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
         if self.should_submit:
             for node in doctree.traverse(nodes.image):
                 node['uri'] = self._publish_entry(node['uri'])
+
+    def get_relative_uri(self, from_, to, typ=None):
+        """
+        Generate a content ID directive that deconst will use to map an href
+        to the correct content at presentation-time.
+        """
+
+        base = self.deconst_config.content_id_base
+        to_uri = self.get_target_uri(to, typ=typ)
+        to_content_id = normalize_content_id(urljoin(base, to_uri))
+        return "{{ to('" + to_content_id + "') }}"
 
     def _publish_entry(self, srcfile):
         # TODO guess the content-type
