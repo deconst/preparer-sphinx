@@ -15,17 +15,6 @@ from deconstrst.config import Configuration
 Config.config_values["deconst_default_layout"] = ("default", "html")
 
 
-def normalize_content_id(content_id):
-    """
-    Normalize a content ID by trimming a final /.
-    """
-
-    if content_id and content_id[-1] == "/":
-        return content_id[:-1]
-    else:
-        return content_id
-
-
 class DeconstJSONBuilder(JSONHTMLBuilder):
     """
     Custom Sphinx builder that generates Deconst-compatible JSON documents.
@@ -60,18 +49,22 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
             "layout_key": context["deconst_layout_key"]
         }
 
-        n = context.get("next")
-        p = context.get("prev")
+        rel_next, rel_previous = None, None
+        for rellink in context.get("rellinks"):
+            if rellink[2] == "N":
+                rel_next = rellink
+            elif rellink[2] == "P":
+                rel_previous = rellink
 
-        if n:
+        if rel_next:
             envelope["next"] = {
-                "url": n["link"],
-                "title": n["title"]
+                "contentID": self._content_id_for_docname(rel_next[0]),
+                "title": rel_next[1]
             }
-        if p:
+        if rel_previous:
             envelope["previous"] = {
-                "url": p["link"],
-                "title": p["title"]
+                "contentID": self._content_id_for_docname(rel_previous[0]),
+                "title": rel_previous[1]
             }
 
         if context["display_toc"]:
@@ -110,10 +103,23 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
         to the correct content at presentation-time.
         """
 
-        base = self.deconst_config.content_id_base
-        to_uri = self.get_target_uri(to, typ=typ)
-        to_content_id = normalize_content_id(urljoin(base, to_uri))
+        to_content_id = self._content_id_for_docname(to, typ=None)
         return "{{ to('" + to_content_id + "') }}"
+
+    def _content_id_for_docname(self, docname, typ=None):
+        """
+        Generate a normalized content ID that corresponds to a Sphinx document
+        name.
+        """
+
+        base = self.deconst_config.content_id_base
+        doc_uri = self.get_target_uri(docname, typ=type)
+        doc_content_id = urljoin(base, doc_uri, allow_fragments=True)
+
+        if doc_content_id and doc_content_id[-1] == "/":
+            doc_content_id = doc_content_id[:-1]
+
+        return doc_content_id
 
     def _publish_entry(self, srcfile):
         # TODO guess the content-type
