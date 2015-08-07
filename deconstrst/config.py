@@ -36,7 +36,7 @@ class Configuration:
         doc = json.load(f)
 
         for setting, value in doc.items():
-            if setting == "content-id-base":
+            if setting == "contentIDBase":
                 if not self.content_id_base:
                     self.content_id_base = value
                 elif self.content_id_base != value:

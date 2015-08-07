@@ -15,8 +15,8 @@ def main():
 
     config = Configuration(os.environ)
 
-    if os.path.exists(".deconst.json"):
-        with open(".deconst.json", "r") as cf:
+    if os.path.exists("_deconst.json"):
+        with open("_deconst.json", "r") as cf:
             config.apply_file(cf)
 
     # Lock source and destination to the same paths as the Makefile.
