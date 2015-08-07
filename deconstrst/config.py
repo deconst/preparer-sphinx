@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 
 def _normalize(url):
     """
@@ -22,6 +24,28 @@ class Configuration:
         self.content_store_apikey = env.get("CONTENT_STORE_APIKEY")
         self.content_id_base = _normalize(env.get("CONTENT_ID_BASE"))
         self.is_primary = env.get("TRAVIS_PULL_REQUEST") == "false"
+
+    def apply_file(self, f):
+        """
+        Parse the contents of an open filehandle as JSON and apply recognized
+        settings found there to this configuration.
+
+        Environment variables take precedence over any values found here.
+        """
+
+        doc = json.load(f)
+
+        for setting, value in doc.items():
+            if setting == "content-id-base":
+                if not self.content_id_base:
+                    self.content_id_base = value
+                elif self.content_id_base != value:
+                    print("Using environment variable CONTENT_ID_BASE=[{}] "
+                          "instead of .deconst.json setting [{}]."
+                          .format(self.content_store_url, value))
+            else:
+                print("Ignoring an unrecognized configuration setting: [{}]"
+                      .format(setting))
 
     def skip_submit_reasons(self):
         """
