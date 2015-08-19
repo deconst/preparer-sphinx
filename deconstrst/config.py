@@ -38,11 +38,11 @@ class Configuration:
         for setting, value in doc.items():
             if setting == "contentIDBase":
                 if not self.content_id_base:
-                    self.content_id_base = value
-                elif self.content_id_base != value:
+                    self.content_id_base = _normalize(value)
+                elif self.content_id_base != _normalize(value):
                     print("Using environment variable CONTENT_ID_BASE=[{}] "
-                          "instead of .deconst.json setting [{}]."
-                          .format(self.content_store_url, value))
+                          "instead of _deconst.json setting [{}]."
+                          .format(self.content_id_base, value))
             else:
                 print("Ignoring an unrecognized configuration setting: [{}]"
                       .format(setting))
