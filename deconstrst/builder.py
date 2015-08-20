@@ -27,6 +27,11 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
         JSONHTMLBuilder.init(self)
 
         self.deconst_config = Configuration(os.environ)
+
+        if os.path.exists("_deconst.json"):
+            with open("_deconst.json", "r") as cf:
+                self.deconst_config.apply_file(cf)
+
         self.should_submit = not self.deconst_config.skip_submit_reasons()
 
     def finish(self):
