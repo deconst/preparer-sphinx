@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import mimetypes
 from os import path
 
 import requests
@@ -12,15 +13,6 @@ from deconstrst.config import Configuration
 
 # Tell Sphinx about the deconst_default_layout key.
 Config.config_values["deconst_default_layout"] = ("default", "html")
-
-# Known content types
-CONTENT_TYPES = {
-    '.png': 'image/png',
-    '.jpg': 'image/jpg',
-    '.jpeg': 'image/jpg',
-    '.gif': 'image/gif',
-    '.svg': 'image/svg+xml',
-}
 
 
 class DeconstJSONBuilder(JSONHTMLBuilder):
@@ -107,10 +99,7 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
                 node['uri'] = self._publish_entry(node['uri'])
 
     def _publish_entry(self, srcfile):
-        content_type = None
-        (_, ext) = path.splitext(srcfile)
-        if ext:
-            content_type = CONTENT_TYPES.get(ext)
+        (content_type, _) = mimetypes.guess_type(srcfile)
 
         auth = 'deconst apikey="{}"'.format(
             self.deconst_config.content_store_apikey)
