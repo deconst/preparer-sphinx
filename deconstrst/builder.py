@@ -108,7 +108,7 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
         url = self.deconst_config.content_store_url + "assets"
         basename = path.basename(srcfile)
         if content_type:
-            payload = (basename, open(srcfile, 'rb'), content_type, {})
+            payload = (basename, open(srcfile, 'rb'), content_type)
         else:
             payload = open(srcfile, 'rb')
         files = {basename: payload}
