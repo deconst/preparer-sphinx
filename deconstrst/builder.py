@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import mimetypes
 from os import path
 
 import requests
@@ -98,7 +99,7 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
                 node['uri'] = self._publish_entry(node['uri'])
 
     def _publish_entry(self, srcfile):
-        # TODO guess the content-type
+        (content_type, _) = mimetypes.guess_type(srcfile)
 
         auth = 'deconst apikey="{}"'.format(
             self.deconst_config.content_store_apikey)
@@ -106,7 +107,11 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
 
         url = self.deconst_config.content_store_url + "assets"
         basename = path.basename(srcfile)
-        files = {basename: open(srcfile, 'rb')}
+        if content_type:
+            payload = (basename, open(srcfile, 'rb'), content_type)
+        else:
+            payload = open(srcfile, 'rb')
+        files = {basename: payload}
 
         response = requests.post(url, files=files, headers=headers)
         response.raise_for_status()
