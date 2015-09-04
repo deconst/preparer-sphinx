@@ -94,7 +94,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         the
         """
 
-        JSONHTMLBuilder.post_process_images(self, doctree)
+        SingleFileHTMLBuilder.post_process_images(self, doctree)
 
         if self.should_submit:
             for node in doctree.traverse(nodes.image):
