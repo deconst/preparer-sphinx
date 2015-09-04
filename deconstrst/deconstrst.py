@@ -44,16 +44,13 @@ def get_conf_builder():
 
     try:
         code = compile(conf_data, 'conf.py', 'exec')
+        exec(code)
     except SyntaxError:
-        raise
+        """
+        We'll just pretend nothing happend and use the default builder
+        """
 
-    exec(code)
-    local_vars = locals()
-
-    try:
-        return local_vars['builder']
-    except KeyError:
-        return DEFAULT_BUILDER
+    return locals().get('builder', DEFAULT_BUILDER)
 
 def submit(destdir, content_store_url, content_store_apikey, content_id_base):
     """
