@@ -80,7 +80,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         outfile = os.path.join(self.outdir, self.config.master_doc + '.json')
 
         with open(outfile, 'w') as dumpfile:
-            json.dump({"envelope": envelope}, dumpfile)
+            json.dump(envelope, dumpfile)
 
     def finish(self):
         """
