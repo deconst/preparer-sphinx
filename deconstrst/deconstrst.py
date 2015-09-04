@@ -5,9 +5,12 @@ import os
 import urllib.parse
 
 import requests
-from deconstrst.builder import DeconstJSONBuilder
+from deconstrst.builders.serial import DeconstSerialJSONBuilder
+from deconstrst.builders.single import DeconstSingleJSONBuilder
 from sphinx.application import Sphinx
 from sphinx.builders import BUILTIN_BUILDERS
+
+DEFAULT_BUILDER = 'deconst-serial'
 
 
 def build(srcdir, destdir):
@@ -16,12 +19,14 @@ def build(srcdir, destdir):
     """
 
     # I am a terrible person
-    BUILTIN_BUILDERS['deconst'] = DeconstJSONBuilder
+    BUILTIN_BUILDERS['deconst-serial'] = DeconstSerialJSONBuilder
+    BUILTIN_BUILDERS['deconst-single'] = DeconstSingleJSONBuilder
 
+    conf_builder = get_conf_builder()
     doctreedir = os.path.join(destdir, '.doctrees')
 
     app = Sphinx(srcdir=srcdir, confdir=srcdir, outdir=destdir,
-                 doctreedir=doctreedir, buildername="deconst",
+                 doctreedir=doctreedir, buildername=conf_builder,
                  confoverrides={}, status=sys.stdout, warning=sys.stderr,
                  freshenv=True, warningiserror=False, tags=[], verbosity=0,
                  parallel=1)
@@ -29,6 +34,19 @@ def build(srcdir, destdir):
 
     return app.statuscode
 
+def get_conf_builder():
+    with open('conf.py') as conf_file:
+        conf_data = conf_file.read()
+
+    try:
+        code = compile(conf_data, 'conf.py', 'exec')
+        exec(code)
+    except SyntaxError:
+        """
+        We'll just pretend nothing happend and use the default builder
+        """
+
+    return locals().get('builder', DEFAULT_BUILDER)
 
 def submit(destdir, content_store_url, content_store_apikey, content_id_base):
     """
