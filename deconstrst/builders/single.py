@@ -16,7 +16,6 @@ from sphinx.util.console import bold, darkgreen, brown
 from sphinx.writers.html import HTMLWriter
 from sphinx.config import Config
 from deconstrst.config import Configuration
-from pprint import pprint
 
 # Tell Sphinx about the deconst_default_layout key.
 Config.config_values["deconst_default_layout"] = ("default", "html")
