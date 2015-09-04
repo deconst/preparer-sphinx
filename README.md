@@ -26,6 +26,12 @@ export CONTENT_ID_BASE=https://github.com/myorg/myrepo
 
 ### Configuration
 
+By default, the preparer will use the `deconst-serial` builder, which will generate a separate HTML file for every ReST file in your repository. This behavior is similar to running `make html`. If you would rather generate a single HTML file with the contents of your entire repo (à la `make singlehtml`), you must add the following line to your `conf.py` file:
+
+```python
+builder = 'deconst-single'
+```
+
 The following values must be present in the build environment to submit assets:
 
  * `CONTENT_STORE_URL` must be the base URL of the publicly available content store service. The prepare script defaults this to one consistent with our docker-compose setups.
