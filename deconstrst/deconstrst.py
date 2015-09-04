@@ -35,12 +35,8 @@ def build(srcdir, destdir):
     return app.statuscode
 
 def get_conf_builder():
-    conf_file = open('conf.py')
-
-    try:
+    with open('conf.py') as conf_file:
         conf_data = conf_file.read()
-    finally:
-        conf_file.close()
 
     try:
         code = compile(conf_data, 'conf.py', 'exec')
