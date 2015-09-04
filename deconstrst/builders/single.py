@@ -39,6 +39,24 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
         self.should_submit = not self.deconst_config.skip_submit_reasons()
 
+    def fix_refuris(self, tree):
+        """
+        The parent implementation of this includes the base file name, which
+        breaks if we serve with a trailing slash. We just want what's between
+        the last "#" and the end of the string
+        """
+
+        # fix refuris with double anchor
+        for refnode in tree.traverse(nodes.reference):
+            if 'refuri' not in refnode:
+                continue
+            refuri = refnode['refuri']
+            hashindex = refuri.rfind('#')
+            if hashindex < 0:
+                continue
+
+            refnode['refuri'] = refuri[hashindex:]
+
     def write(self, *ignored):
         docnames = self.env.all_docs
 
@@ -64,6 +82,8 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
         title = self.env.longtitles.get(self.config.master_doc)
         toc = self.env.get_toctree_for(self.config.master_doc, self, False)
+
+        self.fix_refuris(toc)
 
         rendered_title = self.render_partial(title)['title']
         rendered_body = self.render_partial(doctree)['fragment']
