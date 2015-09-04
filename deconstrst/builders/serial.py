@@ -15,7 +15,7 @@ from deconstrst.config import Configuration
 Config.config_values["deconst_default_layout"] = ("default", "html")
 
 
-class DeconstJSONBuilder(JSONHTMLBuilder):
+class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
     Custom Sphinx builder that generates Deconst-compatible JSON documents.
     """
@@ -43,6 +43,7 @@ class DeconstJSONBuilder(JSONHTMLBuilder):
         """
 
     def dump_context(self, context, filename):
+
         """
         Override the default serialization code to save a derived metadata
         envelope, instead.

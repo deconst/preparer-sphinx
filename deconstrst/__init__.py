@@ -3,7 +3,7 @@
 import os
 import sys
 
-from deconstrst.deconstrst import build, submit
+from deconstrst.deconstrst import build, submit, get_conf_builder
 from deconstrst.config import Configuration
 
 __author__ = 'Ash Wilson'
@@ -11,7 +11,10 @@ __email__ = 'ash.wilson@rackspace.com'
 __version__ = '0.1.0'
 
 
-def main():
+def main(directory=False):
+
+    if directory:
+        os.chdir(directory)
 
     config = Configuration(os.environ)
 
@@ -20,7 +23,8 @@ def main():
             config.apply_file(cf)
 
     # Lock source and destination to the same paths as the Makefile.
-    srcdir, destdir = '.', '_build/deconst'
+    srcdir = '.'
+    destdir = os.path.join('_build', get_conf_builder())
 
     status = build(srcdir, destdir)
     if status != 0:
