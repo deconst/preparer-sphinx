@@ -31,9 +31,8 @@ setup(
     url='https://github.com/deconst/preparer-sphinx',
     packages=[
         'deconstrst',
+        'deconstrst.builders'
     ],
-    package_dir={'deconstrst':
-                 'deconstrst'},
     include_package_data=True,
     install_requires=requirements,
     license="Apache 2",
