@@ -22,7 +22,7 @@ def build(srcdir, destdir):
     BUILTIN_BUILDERS['deconst-serial'] = DeconstSerialJSONBuilder
     BUILTIN_BUILDERS['deconst-single'] = DeconstSingleJSONBuilder
 
-    conf_builder = get_conf_builder()
+    conf_builder = get_conf_builder(srcdir)
     doctreedir = os.path.join(destdir, '.doctrees')
 
     app = Sphinx(srcdir=srcdir, confdir=srcdir, outdir=destdir,
@@ -34,8 +34,8 @@ def build(srcdir, destdir):
 
     return app.statuscode
 
-def get_conf_builder():
-    with open('conf.py') as conf_file:
+def get_conf_builder(srcdir):
+    with open(os.path.join(srcdir, 'conf.py')) as conf_file:
         conf_data = conf_file.read()
 
     try:

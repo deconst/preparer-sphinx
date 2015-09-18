@@ -24,7 +24,7 @@ def main(directory=False):
 
     # Lock source and destination to the same paths as the Makefile.
     srcdir = '.'
-    destdir = os.path.join('_build', get_conf_builder())
+    destdir = os.path.join('_build', get_conf_builder(srcdir))
 
     status = build(srcdir, destdir)
     if status != 0:
