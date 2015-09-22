@@ -35,7 +35,7 @@ def build(srcdir, destdir):
     return app.statuscode
 
 def get_conf_builder(srcdir):
-    with open(os.path.join(srcdir, 'conf.py')) as conf_file:
+    with open(os.path.join(srcdir, 'conf.py'), encoding="utf-8") as conf_file:
         conf_data = conf_file.read()
 
     try:

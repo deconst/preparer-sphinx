@@ -34,7 +34,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         self.deconst_config = Configuration(os.environ)
 
         if os.path.exists("_deconst.json"):
-            with open("_deconst.json", "r") as cf:
+            with open("_deconst.json", "r", encoding="utf-8") as cf:
                 self.deconst_config.apply_file(cf)
 
         self.should_submit = not self.deconst_config.skip_submit_reasons()
@@ -99,7 +99,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
         outfile = os.path.join(self.outdir, self.config.master_doc + '.json')
 
-        with open(outfile, 'w') as dumpfile:
+        with open(outfile, 'w', encoding="utf-8") as dumpfile:
             json.dump(envelope, dumpfile)
 
     def finish(self):
