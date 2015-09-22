@@ -8,13 +8,13 @@ except ImportError:
     from distutils.core import setup
 
 
-with open('README.md') as readme_file:
+with open('README.md', encoding='utf8') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
+with open('HISTORY.rst', encoding='utf8') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
-with open('requirements.txt') as requirements_file:
+with open('requirements.txt', encoding='utf8') as requirements_file:
     requirements = requirements_file.read().split("\n")
 
 test_requirements = [
