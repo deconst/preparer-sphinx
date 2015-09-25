@@ -7,14 +7,11 @@ from os import path
 
 import requests
 from docutils import nodes
-from docutils.io import DocTreeInput, StringOutput
 from sphinx.builders.html import SingleFileHTMLBuilder
-from sphinx.builders.html import JSONHTMLBuilder
-from sphinx.util import jsonimpl
-from sphinx.util.osutil import os_path, relative_uri
-from sphinx.util.console import bold, darkgreen, brown
-from sphinx.writers.html import HTMLWriter
+from sphinx.util.osutil import relative_uri
+from sphinx.util.console import bold
 from sphinx.config import Config
+from docutils.io import StringOutput
 from deconstrst.config import Configuration
 
 # Tell Sphinx about the deconst_default_layout key.
@@ -69,10 +66,14 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         doctree.settings = self.docsettings
 
         self.env.toc_secnumbers = self.assemble_toc_secnumbers()
-        self.secnumbers = self.env.toc_secnumbers.get(self.config.master_doc, {})
-        self.fignumbers = self.env.toc_fignumbers.get(self.config.master_doc, {})
-        self.imgpath = relative_uri(self.get_target_uri(self.config.master_doc), '_images')
-        self.dlpath = relative_uri(self.get_target_uri(self.config.master_doc), '_downloads')
+        self.secnumbers = self.env.toc_secnumbers.get(self.config.master_doc,
+                                                      {})
+        self.fignumbers = self.env.toc_fignumbers.get(self.config.master_doc,
+                                                      {})
+
+        target_uri = self.get_target_uri(self.config.master_doc)
+        self.imgpath = relative_uri(target_uri, '_images')
+        self.dlpath = relative_uri(target_uri, '_downloads')
         self.current_docname = self.config.master_doc
 
         if self.should_submit:
@@ -86,14 +87,17 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         self.fix_refuris(toc)
 
         rendered_title = self.render_partial(title)['title']
-        rendered_body = self.render_partial(doctree)['fragment']
         rendered_toc = self.render_partial(toc)['fragment']
+        layout_key = meta.get('deconstlayout',
+                              self.config.deconst_default_layout)
+
+        rendered_body = self.write_body(doctree)
 
         envelope = {
             "title": meta.get('deconsttitle', rendered_title),
             "body": rendered_body,
             "toc": rendered_toc,
-            "layout_key": meta.get('deconstlayout', self.config.deconst_default_layout),
+            "layout_key": layout_key,
             "meta": dict(meta)
         }
 
@@ -102,11 +106,19 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         with open(outfile, 'w', encoding="utf-8") as dumpfile:
             json.dump(envelope, dumpfile)
 
+    def write_body(self, doctree):
+        destination = StringOutput(encoding='utf-8')
+        doctree.settings = self.docsettings
+
+        self.docwriter.write(doctree, destination)
+        self.docwriter.assemble_parts()
+
+        return self.docwriter.parts['fragment']
+
     def finish(self):
         """
         Nothing to see here
         """
-
 
     def post_process_images(self, doctree):
         """
@@ -119,7 +131,6 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         if self.should_submit:
             for node in doctree.traverse(nodes.image):
                 node['uri'] = self._publish_entry(node['uri'])
-
 
     def _publish_entry(self, srcfile):
         (content_type, _) = mimetypes.guess_type(srcfile)
