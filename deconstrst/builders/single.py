@@ -11,6 +11,7 @@ from sphinx.builders.html import SingleFileHTMLBuilder
 from sphinx.util.osutil import relative_uri
 from sphinx.util.console import bold
 from sphinx.config import Config
+from docutils.io import StringOutput
 from deconstrst.config import Configuration
 
 # Tell Sphinx about the deconst_default_layout key.
@@ -86,10 +87,11 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         self.fix_refuris(toc)
 
         rendered_title = self.render_partial(title)['title']
-        rendered_body = self.render_partial(doctree)['fragment']
         rendered_toc = self.render_partial(toc)['fragment']
         layout_key = meta.get('deconstlayout',
                               self.config.deconst_default_layout)
+
+        rendered_body = self.write_body(doctree)
 
         envelope = {
             "title": meta.get('deconsttitle', rendered_title),
@@ -103,6 +105,15 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
         with open(outfile, 'w', encoding="utf-8") as dumpfile:
             json.dump(envelope, dumpfile)
+
+    def write_body(self, doctree):
+        destination = StringOutput(encoding='utf-8')
+        doctree.settings = self.docsettings
+
+        self.docwriter.write(doctree, destination)
+        self.docwriter.assemble_parts()
+
+        return self.docwriter.parts['fragment']
 
     def finish(self):
         """
