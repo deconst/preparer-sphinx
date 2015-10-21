@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import mimetypes
 import json
 from os import path
@@ -50,6 +51,10 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
             refuri = refnode['refuri']
             hashindex = refuri.rfind('#')
             if hashindex < 0:
+                continue
+
+            # Leave absolute URLs alone
+            if re.match("^https?://", refuri):
                 continue
 
             refnode['refuri'] = refuri[hashindex:]
