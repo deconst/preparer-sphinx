@@ -24,6 +24,7 @@ class Configuration:
         self.content_store_apikey = env.get("CONTENT_STORE_APIKEY")
         self.content_id_base = _normalize(env.get("CONTENT_ID_BASE"))
         self.is_primary = env.get("TRAVIS_PULL_REQUEST") == "false"
+        self.tls_verify = env.get("CONTENT_STORE_TLS_VERIFY") != "false"
 
     def apply_file(self, f):
         """
