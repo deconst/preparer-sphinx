@@ -43,7 +43,7 @@ def get_conf_builder(srcdir):
         exec(code)
     except SyntaxError:
         """
-        We'll just pretend nothing happend and use the default builder
+        We'll just pretend nothing happened and use the default builder
         """
 
     return locals().get('builder', DEFAULT_BUILDER)
@@ -86,7 +86,8 @@ def submit(destdir, content_store_url, content_store_apikey, content_id_base,
                     urllib.parse.quote(content_id, safe='')
 
                 with open(fullpath, "rb") as inf:
-                    response = requests.put(url, data=inf, headers=headers)
+                    response = requests.put(url, data=inf, headers=headers,
+                                            verify=verify)
                     response.raise_for_status()
 
                 print("success")

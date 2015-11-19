@@ -43,7 +43,8 @@ def main(directory=False):
     submit(destdir,
            config.content_store_url,
            config.content_store_apikey,
-           config.content_id_base)
+           config.content_id_base,
+           config.tls_verify)
 
 
 if __name__ == '__main__':
