@@ -86,7 +86,8 @@ def submit(destdir, content_store_url, content_store_apikey, content_id_base,
                     urllib.parse.quote(content_id, safe='')
 
                 with open(fullpath, "rb") as inf:
-                    response = requests.put(url, data=inf, headers=headers)
+                    response = requests.put(url, data=inf, headers=headers,
+                                            verify=verify)
                     response.raise_for_status()
 
                 print("success")
