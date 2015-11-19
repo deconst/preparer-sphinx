@@ -21,6 +21,10 @@ export CONTENT_STORE_URL=http://my-content-store.com:9000/
 export CONTENT_STORE_APIKEY="cd54a09f6593cb5b17177..."
 export CONTENT_ID_BASE=https://github.com/myorg/myrepo
 
+# Ignore TLS certificate verification
+# Very bad, but sometimes necessary in development or local environments
+# export CONTENT_STORE_TLS_VERIFY="false"
+
 ./deconst-preparer-sphinx.sh /path/to/control-repo
 ```
 
