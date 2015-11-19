@@ -143,6 +143,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         auth = 'deconst apikey="{}"'.format(
             self.deconst_config.content_store_apikey)
         headers = {"Authorization": auth}
+        verify = self.deconst_config.tls_verify
 
         url = self.deconst_config.content_store_url + "assets"
         basename = path.basename(srcfile)
@@ -152,6 +153,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
             payload = open(srcfile, 'rb')
         files = {basename: payload}
 
-        response = requests.post(url, files=files, headers=headers)
+        response = requests.post(url, files=files, headers=headers,
+                                 verify=verify)
         response.raise_for_status()
         return response.json()[basename]

@@ -48,7 +48,8 @@ def get_conf_builder(srcdir):
 
     return locals().get('builder', DEFAULT_BUILDER)
 
-def submit(destdir, content_store_url, content_store_apikey, content_id_base):
+def submit(destdir, content_store_url, content_store_apikey, content_id_base,
+           verify):
     """
     Submit the generated json files to the content store API.
     """
