@@ -43,7 +43,7 @@ def get_conf_builder(srcdir):
         exec(code)
     except SyntaxError:
         """
-        We'll just pretend nothing happend and use the default builder
+        We'll just pretend nothing happened and use the default builder
         """
 
     return locals().get('builder', DEFAULT_BUILDER)
