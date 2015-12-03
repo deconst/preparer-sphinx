@@ -94,7 +94,8 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
         unsearchable = meta.get('deconstunsearchable',
                                 self.config.deconst_default_unsearchable)
-        unsearchable = unsearchable in ("true", True)
+        if unsearchable is not None:
+            unsearchable = unsearchable in ("true", True)
 
         rendered_body = self.write_body(doctree)
 
