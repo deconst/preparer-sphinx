@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import mimetypes
 from os import path
 
@@ -55,6 +56,15 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             unsearchable = context["deconst_unsearchable"] in ("true", True)
             envelope["unsearchable"] = unsearchable
 
+        page_cats = context["deconst_categories"]
+        global_cats = self.config.deconst_categories
+        if page_cats is not None or global_cats is not None:
+            cats = set()
+            if page_cats is not None:
+                cats.update(re.split("\s*,\s*", page_cats))
+            cats.update(global_cats or [])
+            envelope["categories"] = list(cats)
+
         n = context.get("next")
         p = context.get("prev")
 
@@ -84,6 +94,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         ctx["deconst_layout_key"] = meta.get(
             "deconstlayout", self.config.deconst_default_layout)
         ctx["deconst_title"] = meta.get("deconsttitle", ctx["title"])
+        ctx["deconst_categories"] = meta.get("deconstcategories")
         ctx["deconst_unsearchable"] = meta.get(
             "deconstunsearchable", self.config.deconst_default_unsearchable)
 
