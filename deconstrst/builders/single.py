@@ -110,6 +110,15 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         if unsearchable is not None:
             envelope["unsearchable"] = unsearchable
 
+        page_cats = meta.get('deconstcategories')
+        global_cats = self.config.deconst_categories
+        if page_cats is not None or global_cats is not None:
+            cats = set()
+            if page_cats is not None:
+                cats.update(re.split("\s*,\s*", page_cats))
+            cats.update(global_cats or [])
+            envelope["categories"] = list(cats)
+
         outfile = os.path.join(self.outdir, self.config.master_doc + '.json')
 
         with open(outfile, 'w', encoding="utf-8") as dumpfile:
