@@ -11,12 +11,8 @@ from docutils import nodes
 from sphinx.builders.html import SingleFileHTMLBuilder
 from sphinx.util.osutil import relative_uri
 from sphinx.util.console import bold
-from sphinx.config import Config
 from docutils.io import StringOutput
 from deconstrst.config import Configuration
-
-# Tell Sphinx about the deconst_default_layout key.
-Config.config_values["deconst_default_layout"] = ("default", "html")
 
 
 class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
@@ -95,7 +91,8 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         rendered_toc = self.render_partial(toc)['fragment']
         layout_key = meta.get('deconstlayout',
                               self.config.deconst_default_layout)
-        unsearchable = meta.get('deconstunsearchable')
+        unsearchable = meta.get('deconstunsearchable',
+                                self.config.deconst_default_unsearchable)
 
         rendered_body = self.write_body(doctree)
 
