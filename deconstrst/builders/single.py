@@ -91,8 +91,10 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         rendered_toc = self.render_partial(toc)['fragment']
         layout_key = meta.get('deconstlayout',
                               self.config.deconst_default_layout)
+
         unsearchable = meta.get('deconstunsearchable',
                                 self.config.deconst_default_unsearchable)
+        unsearchable = unsearchable in ("true", True)
 
         rendered_body = self.write_body(doctree)
 

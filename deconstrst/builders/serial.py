@@ -52,7 +52,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         }
 
         if context["deconst_unsearchable"] is not None:
-            envelope["unsearchable"] = context["deconst_unsearchable"]
+            unsearchable = context["deconst_unsearchable"] in ("true", True)
+            envelope["unsearchable"] = unsearchable
 
         n = context.get("next")
         p = context.get("prev")
