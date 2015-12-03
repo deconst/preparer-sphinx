@@ -70,3 +70,17 @@ Similary, you can override the `"title"` Sphinx generates for any page by specif
 ```
 
 This is especially important for your `index.rst` file, which by default generates a title of "&lt; no title &gt;".
+
+### Categories
+
+You can set the Deconst categories for each page with the `deconstcategories` per-page attribute:
+
+```rst
+:deconstcategories: category one, category two
+```
+
+Categories that should be applied to *all* pages may be specifed in your `conf.py` file, with the rest of your Sphinx settings:
+
+```python
+deconst_categories = ['global category', 'global category']
+```
