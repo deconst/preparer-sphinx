@@ -55,6 +55,9 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             "layout_key": context["deconst_layout_key"]
         }
 
+        if context["deconst_unsearchable"] is not None:
+            envelope["unsearchable"] = context["deconst_unsearchable"]
+
         n = context.get("next")
         p = context.get("prev")
 
@@ -84,6 +87,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         ctx["deconst_layout_key"] = meta.get(
             "deconstlayout", self.config.deconst_default_layout)
         ctx["deconst_title"] = meta.get("deconsttitle", ctx["title"])
+        ctx["deconst_unsearchable"] = meta.get("deconstunsearchable")
 
         super().handle_page(pagename, ctx, *args, **kwargs)
 

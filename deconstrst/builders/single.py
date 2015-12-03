@@ -95,6 +95,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         rendered_toc = self.render_partial(toc)['fragment']
         layout_key = meta.get('deconstlayout',
                               self.config.deconst_default_layout)
+        unsearchable = meta.get('deconstunsearchable')
 
         rendered_body = self.write_body(doctree)
 
@@ -105,6 +106,9 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
             "layout_key": layout_key,
             "meta": dict(meta)
         }
+
+        if unsearchable is not None:
+            envelope["unsearchable"] = unsearchable
 
         outfile = os.path.join(self.outdir, self.config.master_doc + '.json')
 
