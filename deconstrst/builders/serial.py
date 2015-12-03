@@ -8,11 +8,7 @@ import requests
 from docutils import nodes
 from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
-from sphinx.config import Config
 from deconstrst.config import Configuration
-
-# Tell Sphinx about the deconst_default_layout key.
-Config.config_values["deconst_default_layout"] = ("default", "html")
 
 
 class DeconstSerialJSONBuilder(JSONHTMLBuilder):
@@ -55,6 +51,10 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             "layout_key": context["deconst_layout_key"]
         }
 
+        if context["deconst_unsearchable"] is not None:
+            unsearchable = context["deconst_unsearchable"] in ("true", True)
+            envelope["unsearchable"] = unsearchable
+
         n = context.get("next")
         p = context.get("prev")
 
@@ -84,6 +84,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         ctx["deconst_layout_key"] = meta.get(
             "deconstlayout", self.config.deconst_default_layout)
         ctx["deconst_title"] = meta.get("deconsttitle", ctx["title"])
+        ctx["deconst_unsearchable"] = meta.get(
+            "deconstunsearchable", self.config.deconst_default_unsearchable)
 
         super().handle_page(pagename, ctx, *args, **kwargs)
 
