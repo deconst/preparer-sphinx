@@ -46,10 +46,15 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         envelope, instead.
         """
 
+        # Merge this page's metadata with the repo-wide data.
+        meta = self.deconst_config.meta.copy()
+        meta.update(context['meta'])
+
         envelope = {
             "body": context["body"],
             "title": context["deconst_title"],
-            "layout_key": context["deconst_layout_key"]
+            "layout_key": context["deconst_layout_key"],
+            "meta": meta
         }
 
         if context["deconst_unsearchable"] is not None:

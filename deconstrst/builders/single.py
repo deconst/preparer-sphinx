@@ -80,7 +80,9 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         if self.should_submit:
             self.post_process_images(doctree)
 
-        meta = self.env.metadata.get(self.config.master_doc)
+        # Merge this page's metadata with the repo-wide data.
+        meta = self.deconst_config.meta.copy()
+        meta.update(self.env.metadata.get(self.config.master_doc))
 
         title = self.env.longtitles.get(self.config.master_doc)
         toc = self.env.get_toctree_for(self.config.master_doc, self, False)

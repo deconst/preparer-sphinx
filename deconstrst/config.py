@@ -25,6 +25,7 @@ class Configuration:
         self.content_id_base = _normalize(env.get("CONTENT_ID_BASE"))
         self.is_primary = env.get("TRAVIS_PULL_REQUEST") == "false"
         self.tls_verify = env.get("CONTENT_STORE_TLS_VERIFY") != "false"
+        self.meta = {}
 
     def apply_file(self, f):
         """
@@ -44,9 +45,19 @@ class Configuration:
                     print("Using environment variable CONTENT_ID_BASE=[{}] "
                           "instead of _deconst.json setting [{}]."
                           .format(self.content_id_base, value))
+            elif setting == "githubUrl":
+                self.github_url = value
+                self.github_issues_url = '/'.join(segment.strip('/') for segment in [value, 'issues'])
+            elif setting == "meta":
+                self.meta = value
             else:
                 print("Ignoring an unrecognized configuration setting: [{}]"
                       .format(setting))
+
+        # Add the Github issues URL to the repository-wide metadata
+        if hasattr(self, 'github_issues_url'):
+            self.meta.update({'github_issues_url': self.github_issues_url})
+
 
     def skip_submit_reasons(self):
         """
