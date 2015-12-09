@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+from os import path
 
 
 def _normalize(url):
@@ -26,6 +27,8 @@ class Configuration:
         self.is_primary = env.get("TRAVIS_PULL_REQUEST") == "false"
         self.tls_verify = env.get("CONTENT_STORE_TLS_VERIFY") != "false"
         self.meta = {}
+        self.github_url = ""
+        self.github_branch = "master"
 
     def apply_file(self, f):
         """
@@ -37,27 +40,39 @@ class Configuration:
 
         doc = json.load(f)
 
-        for setting, value in doc.items():
-            if setting == "contentIDBase":
-                if not self.content_id_base:
-                    self.content_id_base = _normalize(value)
-                elif self.content_id_base != _normalize(value):
-                    print("Using environment variable CONTENT_ID_BASE=[{}] "
-                          "instead of _deconst.json setting [{}]."
-                          .format(self.content_id_base, value))
-            elif setting == "githubUrl":
-                self.github_url = value
-                self.github_issues_url = '/'.join(segment.strip('/') for segment in [value, 'issues'])
-            elif setting == "meta":
-                self.meta = value
-            else:
-                print("Ignoring an unrecognized configuration setting: [{}]"
-                      .format(setting))
+        if "contentIDBase" in doc:
+            if not self.content_id_base:
+                self.content_id_base = _normalize(doc["contentIDBase"])
+            elif self.content_id_base != _normalize(doc["contentIDBase"]):
+                print("Using environment variable CONTENT_ID_BASE=[{}] "
+                      "instead of _deconst.json setting [{}]."
+                      .format(self.content_id_base, doc["contentIDBase"]))
 
-        # Add the Github issues URL to the repository-wide metadata
-        if hasattr(self, 'github_issues_url'):
+        if "meta" in doc:
+            self.meta = doc["meta"]
+
+        if "githubUrl" in doc:
+            self.github_url = doc["githubUrl"]
+            self.github_issues_url = '/'.join(segment.strip('/') for segment in [doc["githubUrl"], 'issues'])
             self.meta.update({'github_issues_url': self.github_issues_url})
 
+        if "githubBranch" in doc:
+            self.github_branch = doc["githubBranch"]
+        else:
+            self.github_branch = "master"
+
+    def get_git_root (self, d):
+        """
+        Walk up until we find the ".git" directory, and return its parent
+        """
+        if(path.isdir(path.join(d, '.git'))):
+            return d
+
+        if(d == '/'):
+            raise FileNotFoundError
+
+        print("not in " + d + ", elevator up!")
+        return self.get_git_root(path.realpath(path.join(d, '..')))
 
     def skip_submit_reasons(self):
         """

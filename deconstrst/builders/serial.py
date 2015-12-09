@@ -4,6 +4,7 @@ import os
 import re
 import mimetypes
 from os import path
+import glob
 
 import requests
 from docutils import nodes
@@ -30,6 +31,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             with open("_deconst.json", "r", encoding="utf-8") as cf:
                 self.deconst_config.apply_file(cf)
 
+        self.git_root = self.deconst_config.get_git_root(os.getcwd())
         self.should_submit = not self.deconst_config.skip_submit_reasons()
 
     def finish(self):
@@ -49,6 +51,21 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         # Merge this page's metadata with the repo-wide data.
         meta = self.deconst_config.meta.copy()
         meta.update(context['meta'])
+
+        if hasattr(self.deconst_config, "github_url"):
+            # current_page_name has no extension, and it _might_ not be .rst
+            fileglob = path.join(
+                os.getcwd(), context["current_page_name"] + ".*"
+            )
+
+            edit_segments = [
+                self.deconst_config.github_url,
+                "edit",
+                self.deconst_config.github_branch,
+                path.relpath(glob.glob(fileglob)[0], self.git_root)
+            ]
+
+            meta["github_edit_url"] = '/'.join(segment.strip('/') for segment in edit_segments)
 
         envelope = {
             "body": context["body"],
