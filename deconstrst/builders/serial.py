@@ -31,7 +31,11 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             with open("_deconst.json", "r", encoding="utf-8") as cf:
                 self.deconst_config.apply_file(cf)
 
-        self.git_root = self.deconst_config.get_git_root(os.getcwd())
+        try:
+            self.git_root = self.deconst_config.get_git_root(os.getcwd())
+        except FileNotFoundError:
+            self.git_root = None
+
         self.should_submit = not self.deconst_config.skip_submit_reasons()
 
     def finish(self):
@@ -52,7 +56,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         meta = self.deconst_config.meta.copy()
         meta.update(context['meta'])
 
-        if hasattr(self.deconst_config, "github_url"):
+        if self.git_root != None and hasattr(self.deconst_config, "github_url"):
             # current_page_name has no extension, and it _might_ not be .rst
             fileglob = path.join(
                 os.getcwd(), context["current_page_name"] + ".*"
