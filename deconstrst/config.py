@@ -71,7 +71,6 @@ class Configuration:
         if(d == '/'):
             raise FileNotFoundError
 
-        print("not in " + d + ", elevator up!")
         return self.get_git_root(path.realpath(path.join(d, '..')))
 
     def skip_submit_reasons(self):
