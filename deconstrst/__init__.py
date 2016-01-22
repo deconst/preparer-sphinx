@@ -13,10 +13,15 @@ __version__ = '0.1.0'
 
 def main(directory=False):
 
-    if directory:
-        os.chdir(directory)
-
     config = Configuration(os.environ)
+
+    if config.content_root:
+        if directory && directory != config.content_root:
+            print("Warning: Overriding CONTENT_ROOT [{}] with argument [{}].".format(config.content_root, directory))
+        else:
+            os.chdir(config.content_root)
+    elif directory:
+        os.chdir(directory)
 
     if os.path.exists("_deconst.json"):
         with open("_deconst.json", "r", encoding="utf-8") as cf:
