@@ -16,7 +16,7 @@ def main(directory=False):
     config = Configuration(os.environ)
 
     if config.content_root:
-        if directory && directory != config.content_root:
+        if directory and directory != config.content_root:
             print("Warning: Overriding CONTENT_ROOT [{}] with argument [{}].".format(config.content_root, directory))
         else:
             os.chdir(config.content_root)
