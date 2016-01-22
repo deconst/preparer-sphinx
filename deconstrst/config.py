@@ -21,6 +21,7 @@ class Configuration:
     """
 
     def __init__(self, env):
+        self.content_root = env.get("CONTENT_ROOT")
         self.content_store_url = _normalize(env.get("CONTENT_STORE_URL"))
         self.content_store_apikey = env.get("CONTENT_STORE_APIKEY")
         self.content_id_base = _normalize(env.get("CONTENT_ID_BASE"))
@@ -61,7 +62,7 @@ class Configuration:
         else:
             self.github_branch = "master"
 
-    def get_git_root (self, d):
+    def get_git_root(self, d):
         """
         Walk up until we find the ".git" directory, and return its parent
         """
