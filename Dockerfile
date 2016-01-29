@@ -6,10 +6,19 @@ RUN apk add --no-cache python3 && \
     wget "https://bootstrap.pypa.io/get-pip.py" -O /dev/stdout | python3 && \
     apk del build-dependencies
 
-RUN mkdir -p /usr/src/app /usr/content-repo
+RUN pip install --upgrade pip
+
+RUN adduser -D -g "" -u 1000 preparer
+RUN mkdir -p /usr/src/app /venv /usr/content-repo
+RUN chown -R preparer:preparer /usr/src/app /venv
+
+USER preparer
+
+RUN pyvenv /venv
+ENV PATH /venv/bin:${PATH}
 
 COPY . /usr/src/app
-RUN pip3 install /usr/src/app
+RUN pip install /usr/src/app
 
 VOLUME /usr/content-repo
 WORKDIR /usr/content-repo
