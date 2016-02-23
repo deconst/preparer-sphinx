@@ -107,7 +107,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
         rendered_body = self.write_body(doctree)
 
-        if self.git_root != None and hasattr(self.deconst_config, "github_url"):
+        if self.git_root != None and self.deconst_config.github_url != "":
             # current_page_name has no extension, and it _might_ not be .rst
             fileglob = path.join(
                 os.getcwd(), self.env.srcdir, self.config.master_doc + ".*"

@@ -56,7 +56,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         meta = self.deconst_config.meta.copy()
         meta.update(context['meta'])
 
-        if self.git_root != None and hasattr(self.deconst_config, "github_url"):
+        if self.git_root != None and self.deconst_config.github_url != "":
             # current_page_name has no extension, and it _might_ not be .rst
             fileglob = path.join(
                 os.getcwd(), context["current_page_name"] + ".*"
