@@ -5,6 +5,7 @@ import re
 import mimetypes
 from os import path
 import glob
+import urllib.parse
 
 import requests
 from docutils import nodes
@@ -46,7 +47,6 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         """
 
     def dump_context(self, context, filename):
-
         """
         Override the default serialization code to save a derived metadata
         envelope, instead.
@@ -108,7 +108,25 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         if context["display_toc"]:
             envelope["toc"] = context["toc"]
 
-        super().dump_context(envelope, filename)
+        if self.should_submit:
+            super().dump_context(envelope, filename)
+        else:
+            # Write the envelope to ENVELOPE_DIR.
+            dirname, basename = path.split(context['current_page_name'])
+            if basename == 'index':
+                content_id_suffix = dirname
+            else:
+                content_id_suffix = path.join(dirname, basename)
+
+            content_id = path.join(self.deconst_config.content_id_base, content_id_suffix)
+            if content_id.endswith('/'):
+                content_id = content_id[:-1]
+            print("content_id = {}".format(content_id))
+
+            envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
+            envelope_path = path.join(self.deconst_config.envelope_dir, envelope_filename)
+
+            super().dump_context(envelope, envelope_path)
 
     def handle_page(self, pagename, ctx, *args, **kwargs):
         """
