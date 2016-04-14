@@ -121,7 +121,6 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             content_id = path.join(self.deconst_config.content_id_base, content_id_suffix)
             if content_id.endswith('/'):
                 content_id = content_id[:-1]
-            print("content_id = {}".format(content_id))
 
             envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
             envelope_path = path.join(self.deconst_config.envelope_dir, envelope_filename)
