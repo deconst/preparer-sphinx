@@ -15,6 +15,7 @@ from sphinx.util import jsonimpl
 from deconstrst.config import Configuration
 from .writer import OffsetHTMLTranslator
 
+
 class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
     Custom Sphinx builder that generates Deconst-compatible JSON documents.
