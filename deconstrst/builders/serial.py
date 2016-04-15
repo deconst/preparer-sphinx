@@ -6,13 +6,14 @@ import mimetypes
 from os import path
 import glob
 import urllib.parse
+import shutil
 
 import requests
 from docutils import nodes
 from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
 from deconstrst.config import Configuration
-
+from .writer import OffsetHTMLTranslator
 
 class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
@@ -25,6 +26,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
     def init(self):
         JSONHTMLBuilder.init(self)
+
+        self.translator_class = OffsetHTMLTranslator
 
         self.deconst_config = Configuration(os.environ)
 
