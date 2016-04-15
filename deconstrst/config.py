@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 from os import path
 
 
@@ -22,11 +23,17 @@ class Configuration:
 
     def __init__(self, env):
         self.content_root = env.get("CONTENT_ROOT")
+        self.content_id_base = _normalize(env.get("CONTENT_ID_BASE"))
+
+        self.envelope_dir = env.get("ENVELOPE_DIR", path.join(os.getcwd(), '_build', 'deconst-envelopes'))
+        self.asset_dir = env.get("ASSET_DIR", path.join(os.getcwd(), '_build', 'deconst-assets'))
+
+        # To deprecate
         self.content_store_url = _normalize(env.get("CONTENT_STORE_URL"))
         self.content_store_apikey = env.get("CONTENT_STORE_APIKEY")
-        self.content_id_base = _normalize(env.get("CONTENT_ID_BASE"))
         self.is_primary = env.get("TRAVIS_PULL_REQUEST") == "false"
         self.tls_verify = env.get("CONTENT_STORE_TLS_VERIFY") != "false"
+
         self.meta = {}
         self.github_url = ""
         self.github_branch = "master"

@@ -27,6 +27,11 @@ def main(directory=False):
         with open("_deconst.json", "r", encoding="utf-8") as cf:
             config.apply_file(cf)
 
+    if config.skip_submit_reasons():
+        # Ensure that the envelope and asset directories exist.
+        os.makedirs(config.envelope_dir, exist_ok=True)
+        os.makedirs(config.asset_dir, exist_ok=True)
+
     # Lock source and destination to the same paths as the Makefile.
     srcdir = '.'
     destdir = os.path.join('_build', get_conf_builder(srcdir))

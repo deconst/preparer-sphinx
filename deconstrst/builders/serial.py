@@ -5,12 +5,15 @@ import re
 import mimetypes
 from os import path
 import glob
+import urllib.parse
+import shutil
 
 import requests
 from docutils import nodes
 from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
 from deconstrst.config import Configuration
+from .writer import OffsetHTMLTranslator
 
 
 class DeconstSerialJSONBuilder(JSONHTMLBuilder):
@@ -24,6 +27,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
     def init(self):
         JSONHTMLBuilder.init(self)
+
+        self.translator_class = OffsetHTMLTranslator
 
         self.deconst_config = Configuration(os.environ)
 
@@ -46,7 +51,6 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         """
 
     def dump_context(self, context, filename):
-
         """
         Override the default serialization code to save a derived metadata
         envelope, instead.
@@ -108,7 +112,27 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         if context["display_toc"]:
             envelope["toc"] = context["toc"]
 
-        super().dump_context(envelope, filename)
+        if self.should_submit:
+            super().dump_context(envelope, filename)
+        else:
+            # Inject asset offsets so the submitter can inject asset URLs.
+            envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
+
+            # Write the envelope to ENVELOPE_DIR.
+            dirname, basename = path.split(context['current_page_name'])
+            if basename == 'index':
+                content_id_suffix = dirname
+            else:
+                content_id_suffix = path.join(dirname, basename)
+
+            content_id = path.join(self.deconst_config.content_id_base, content_id_suffix)
+            if content_id.endswith('/'):
+                content_id = content_id[:-1]
+
+            envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
+            envelope_path = path.join(self.deconst_config.envelope_dir, envelope_filename)
+
+            super().dump_context(envelope, envelope_path)
 
     def handle_page(self, pagename, ctx, *args, **kwargs):
         """
@@ -129,7 +153,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     def post_process_images(self, doctree):
         """
         Publish images to the content store. Modify the image reference with
-        the
+        the public URL of the uploaded image.
         """
 
         JSONHTMLBuilder.post_process_images(self, doctree)
