@@ -8,7 +8,7 @@ from sphinx.writers.html import HTMLTranslator
 
 # Regexp to match the source attribute of an <img> tag that's been generated
 # with a placeholder.
-RE_SRCATTR = re.compile(r"src\s*=\s*\\\"(X)\\\"")
+RE_SRCATTR = re.compile(r"src\s*=\s*\"(X)\"")
 
 class OffsetHTMLTranslator(HTMLTranslator):
     """
@@ -41,32 +41,45 @@ class OffsetHTMLTranslator(HTMLTranslator):
             shutil.copyfile(asset_src_path, asset_dest_path)
             node['uri'] = 'X'
 
-            base_offset = self.current_body_offset()
-
         super().visit_image(node)
 
         if not self.should_submit:
             chunk = self.body[-1]
-            chunk_match = RE_SRCATTR.search(self.jsonimpl.dumps(chunk))
+            chunk_match = RE_SRCATTR.search(chunk)
             if not chunk_match:
                 msg = "Unable to find image tag placeholder src attribute within [{}]".format(self.body[-1])
                 raise Exception(msg)
 
-            # Account for the starting " prepended by the jsonimpl.dumps call
-            chunk_offset = chunk_match.start() - 1
-            offset = base_offset + chunk_offset
+            chunk_index = len(self.body) - 1
+            chunk_offset = chunk_match.start(1)
 
-            print("asset [{}] offset = {}".format(asset_rel_path, offset))
-            self.asset_offsets[asset_rel_path] = offset
+            self.asset_offsets[asset_rel_path] = AssetOffset(chunk_index, chunk_offset)
 
-    def current_body_offset(self):
+    def calculate_offsets(self):
         """
-        Calculate the current character offset within "body".
+        Use the final translator state to compute body offsets for all assets.
         """
 
-        # Account for preamble material.
-        # See docutils.writers.html4css1.HTMLTranslator.astext
-        content = ''.join(self.head_prefix + self.head + self.stylesheet
-            + self.body_prefix + self.body_pre_docinfo + self.docinfo
-            + self.body)
-        return len(self.jsonimpl.dumps(content)) - 2
+        if not self.asset_offsets:
+            return {}
+
+        total = 0
+
+        chunk_offsets = []
+        for chunk in self.body:
+            chunk_offsets.append(total)
+            total += len(chunk)
+
+        results = {}
+        for (asset_rel_path, asset_offset) in self.asset_offsets.items():
+            results[asset_rel_path] = chunk_offsets[asset_offset.chunk_index] + asset_offset.chunk_offset
+        return results
+
+class AssetOffset:
+    """
+    Store the location of an asset URL reference within the document.
+    """
+
+    def __init__(self, chunk_index, chunk_offset):
+        self.chunk_index = chunk_index
+        self.chunk_offset = chunk_offset

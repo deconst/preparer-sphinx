@@ -114,6 +114,9 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         if self.should_submit:
             super().dump_context(envelope, filename)
         else:
+            # Inject asset offsets so the submitter can inject asset URLs.
+            envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
+
             # Write the envelope to ENVELOPE_DIR.
             dirname, basename = path.split(context['current_page_name'])
             if basename == 'index':
@@ -149,7 +152,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     def post_process_images(self, doctree):
         """
         Publish images to the content store. Modify the image reference with
-        the
+        the public URL of the uploaded image.
         """
 
         JSONHTMLBuilder.post_process_images(self, doctree)
