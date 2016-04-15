@@ -6,6 +6,7 @@ import mimetypes
 import json
 from os import path
 import glob
+import urllib.parse
 
 import requests
 from docutils import nodes
@@ -14,6 +15,7 @@ from sphinx.util.osutil import relative_uri
 from sphinx.util.console import bold
 from docutils.io import StringOutput
 from deconstrst.config import Configuration
+from .writer import OffsetHTMLTranslator
 
 
 class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
@@ -25,6 +27,8 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
     def init(self):
         SingleFileHTMLBuilder.init(self)
+
+        self.translator_class = OffsetHTMLTranslator
 
         self.deconst_config = Configuration(os.environ)
 
@@ -142,7 +146,16 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
             cats.update(global_cats or [])
             envelope["categories"] = list(cats)
 
-        outfile = os.path.join(self.outdir, self.config.master_doc + '.json')
+        if self.should_submit:
+            outfile = os.path.join(self.outdir, self.config.master_doc + '.json')
+        else:
+            envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
+
+            content_id = self.deconst_config.content_id_base
+            if content_id.endswith('/'):
+                content_id = content_id[:-1]
+            envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
+            outfile = os.path.join(self.deconst_config.envelope_dir, envelope_filename)
 
         with open(outfile, 'w', encoding="utf-8") as dumpfile:
             json.dump(envelope, dumpfile)
