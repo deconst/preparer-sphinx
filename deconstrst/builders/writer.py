@@ -2,6 +2,7 @@
 
 import shutil
 import re
+import os
 from os import path
 
 from sphinx.writers.html import HTMLTranslator
@@ -23,10 +24,8 @@ class OffsetHTMLTranslator(HTMLTranslator):
 
         dc = self.builder.deconst_config
         self.should_submit = not dc.skip_submit_reasons()
-        self.asset_src_root = '_images' # This is actually hardcoded in StandaloneHTMLBuilder
-        self.asset_dest_root = dc.asset_dir
-
-        self.jsonimpl = self.builder.implementation
+        self.asset_src_root = path.realpath('_images') # This is actually hardcoded in StandaloneHTMLBuilder
+        self.asset_dest_root = path.realpath(dc.asset_dir)
 
     def visit_image(self, node):
         """
@@ -34,10 +33,14 @@ class OffsetHTMLTranslator(HTMLTranslator):
         """
 
         if not self.should_submit:
-            asset_src_path = node['uri']
-            asset_rel_path = path.relpath(asset_src_path, self.asset_src_root)
+            asset_src_path = path.realpath(node['uri'])
+            if asset_src_path.startswith(self.asset_src_root):
+                asset_rel_path = path.relpath(asset_src_path, self.asset_src_root)
+            else:
+                asset_rel_path = path.relpath(asset_src_path)
             asset_dest_path = path.join(self.asset_dest_root, asset_rel_path)
 
+            os.makedirs(path.dirname(asset_dest_path), exist_ok=True)
             shutil.copyfile(asset_src_path, asset_dest_path)
             node['uri'] = 'X'
 
