@@ -4,6 +4,7 @@ import shutil
 import re
 import os
 from os import path
+from collections import defaultdict
 
 from sphinx.writers.html import HTMLTranslator
 
@@ -20,7 +21,7 @@ class OffsetHTMLTranslator(HTMLTranslator):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.asset_offsets = {}
+        self.asset_offsets = defaultdict(list)
 
         dc = self.builder.deconst_config
         self.should_submit = not dc.skip_submit_reasons()
@@ -56,7 +57,7 @@ class OffsetHTMLTranslator(HTMLTranslator):
             chunk_index = len(self.body) - 1
             chunk_offset = chunk_match.start(1)
 
-            self.asset_offsets[asset_rel_path] = AssetOffset(chunk_index, chunk_offset)
+            self.asset_offsets[asset_rel_path].append(AssetOffset(chunk_index, chunk_offset))
 
     def calculate_offsets(self):
         """
@@ -74,8 +75,9 @@ class OffsetHTMLTranslator(HTMLTranslator):
             total += len(chunk)
 
         results = {}
-        for (asset_rel_path, asset_offset) in self.asset_offsets.items():
-            results[asset_rel_path] = chunk_offsets[asset_offset.chunk_index] + asset_offset.chunk_offset
+        for (asset_rel_path, asset_offsets) in self.asset_offsets.items():
+            offsets = [chunk_offsets[o.chunk_index] + o.chunk_offset for o in asset_offsets]
+            results[asset_rel_path] = offsets
         return results
 
 class AssetOffset:
