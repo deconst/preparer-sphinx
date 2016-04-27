@@ -75,7 +75,7 @@ class Configuration:
 
         return self.get_git_root(path.realpath(path.join(d, '..')))
 
-    def unable_reasons(self):
+    def missing_values(self):
         """
         Determine whether or not the current build should result in the
         preparation of envelopes. If not, return a list of reasons why it won't.

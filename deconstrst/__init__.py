@@ -3,7 +3,7 @@
 import os
 import sys
 
-from deconstrst.deconstrst import build, submit, get_conf_builder
+from deconstrst.deconstrst import build, get_conf_builder
 from deconstrst.config import Configuration
 
 __author__ = 'Ash Wilson'
@@ -39,7 +39,7 @@ def main(directory=False):
     if status != 0:
         sys.exit(status)
 
-    reasons = config.skip_submit_reasons()
+    reasons = config.missing_values()
     if reasons:
         print("Not preparing content because:", file=sys.stderr)
         print(file=sys.stderr)
