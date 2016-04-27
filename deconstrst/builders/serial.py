@@ -41,8 +41,6 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         except FileNotFoundError:
             self.git_root = None
 
-        self.should_submit = not self.deconst_config.skip_submit_reasons()
-
     def finish(self):
         """
         We need to write images and static assets *first*.
@@ -112,27 +110,24 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         if context["display_toc"]:
             envelope["toc"] = context["toc"]
 
-        if self.should_submit:
-            super().dump_context(envelope, filename)
+        # Inject asset offsets so the submitter can inject asset URLs.
+        envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
+
+        # Write the envelope to ENVELOPE_DIR.
+        dirname, basename = path.split(context['current_page_name'])
+        if basename == 'index':
+            content_id_suffix = dirname
         else:
-            # Inject asset offsets so the submitter can inject asset URLs.
-            envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
+            content_id_suffix = path.join(dirname, basename)
 
-            # Write the envelope to ENVELOPE_DIR.
-            dirname, basename = path.split(context['current_page_name'])
-            if basename == 'index':
-                content_id_suffix = dirname
-            else:
-                content_id_suffix = path.join(dirname, basename)
+        content_id = path.join(self.deconst_config.content_id_base, content_id_suffix)
+        if content_id.endswith('/'):
+            content_id = content_id[:-1]
 
-            content_id = path.join(self.deconst_config.content_id_base, content_id_suffix)
-            if content_id.endswith('/'):
-                content_id = content_id[:-1]
+        envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
+        envelope_path = path.join(self.deconst_config.envelope_dir, envelope_filename)
 
-            envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
-            envelope_path = path.join(self.deconst_config.envelope_dir, envelope_filename)
-
-            super().dump_context(envelope, envelope_path)
+        super().dump_context(envelope, envelope_path)
 
     def handle_page(self, pagename, ctx, *args, **kwargs):
         """
@@ -149,36 +144,3 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             "deconstunsearchable", self.config.deconst_default_unsearchable)
 
         super().handle_page(pagename, ctx, *args, **kwargs)
-
-    def post_process_images(self, doctree):
-        """
-        Publish images to the content store. Modify the image reference with
-        the public URL of the uploaded image.
-        """
-
-        JSONHTMLBuilder.post_process_images(self, doctree)
-
-        if self.should_submit:
-            for node in doctree.traverse(nodes.image):
-                node['uri'] = self._publish_entry(node['uri'])
-
-    def _publish_entry(self, srcfile):
-        (content_type, _) = mimetypes.guess_type(srcfile)
-
-        auth = 'deconst apikey="{}"'.format(
-            self.deconst_config.content_store_apikey)
-        headers = {"Authorization": auth}
-        verify = self.deconst_config.tls_verify
-
-        url = self.deconst_config.content_store_url + "assets"
-        basename = path.basename(srcfile)
-        if content_type:
-            payload = (basename, open(srcfile, 'rb'), content_type)
-        else:
-            payload = open(srcfile, 'rb')
-        files = {basename: payload}
-
-        response = requests.post(url, files=files, headers=headers,
-                                 verify=verify)
-        response.raise_for_status()
-        return response.json()[basename]
