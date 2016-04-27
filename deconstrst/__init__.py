@@ -27,10 +27,9 @@ def main(directory=False):
         with open("_deconst.json", "r", encoding="utf-8") as cf:
             config.apply_file(cf)
 
-    if config.skip_submit_reasons():
-        # Ensure that the envelope and asset directories exist.
-        os.makedirs(config.envelope_dir, exist_ok=True)
-        os.makedirs(config.asset_dir, exist_ok=True)
+    # Ensure that the envelope and asset directories exist.
+    os.makedirs(config.envelope_dir, exist_ok=True)
+    os.makedirs(config.asset_dir, exist_ok=True)
 
     # Lock source and destination to the same paths as the Makefile.
     srcdir = '.'
@@ -42,19 +41,12 @@ def main(directory=False):
 
     reasons = config.skip_submit_reasons()
     if reasons:
-        print("Not submitting content to the content service because:",
-              file=sys.stderr)
+        print("Not preparing content because:", file=sys.stderr)
         print(file=sys.stderr)
         for reason in reasons:
             print(" * " + reason, file=sys.stderr)
         print(file=sys.stderr)
-        return
-
-    submit(destdir,
-           config.content_store_url,
-           config.content_store_apikey,
-           config.content_id_base,
-           config.tls_verify)
+        sys.exit(1)
 
 
 if __name__ == '__main__':

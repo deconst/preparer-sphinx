@@ -28,12 +28,6 @@ class Configuration:
         self.envelope_dir = env.get("ENVELOPE_DIR", path.join(os.getcwd(), '_build', 'deconst-envelopes'))
         self.asset_dir = env.get("ASSET_DIR", path.join(os.getcwd(), '_build', 'deconst-assets'))
 
-        # To deprecate
-        self.content_store_url = _normalize(env.get("CONTENT_STORE_URL"))
-        self.content_store_apikey = env.get("CONTENT_STORE_APIKEY")
-        self.is_primary = env.get("TRAVIS_PULL_REQUEST") == "false"
-        self.tls_verify = env.get("CONTENT_STORE_TLS_VERIFY") != "false"
-
         self.meta = {}
         self.github_url = ""
         self.github_branch = "master"
@@ -81,29 +75,18 @@ class Configuration:
 
         return self.get_git_root(path.realpath(path.join(d, '..')))
 
-    def skip_submit_reasons(self):
+    def unable_reasons(self):
         """
-        Determine whether or not the current build should result in submission
-        to the content service. If not, return a list of reasons why it won't.
+        Determine whether or not the current build should result in the
+        preparation of envelopes. If not, return a list of reasons why it won't.
         """
 
         reasons = []
-
-        if not self.content_store_url:
-            reasons.append("CONTENT_STORE_URL is missing. It should be the "
-                           "base URL of the content storage service.")
-
-        if not self.content_store_apikey:
-            reasons.append("CONTENT_STORE_APIKEY is missing. It should be a "
-                           "valid API key issued by the content service.")
 
         if not self.content_id_base:
             reasons.append("CONTENT_ID_BASE is missing. It should be the base "
                            "URL used to generate IDs for content within this "
                            "repository.")
-
-        if not self.is_primary:
-            reasons.append("This looks like a pull request build on Travis.")
 
         return reasons
 

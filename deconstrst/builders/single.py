@@ -41,8 +41,6 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         except FileNotFoundError:
             self.git_root = None
 
-        self.should_submit = not self.deconst_config.skip_submit_reasons()
-
     def fix_refuris(self, tree):
         """
         The parent implementation of this includes the base file name, which
@@ -86,9 +84,6 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         self.imgpath = relative_uri(target_uri, '_images')
         self.dlpath = relative_uri(target_uri, '_downloads')
         self.current_docname = self.config.master_doc
-
-        if self.should_submit:
-            self.post_process_images(doctree)
 
         # Merge this page's metadata with the repo-wide data.
         meta = self.deconst_config.meta.copy()
@@ -146,16 +141,13 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
             cats.update(global_cats or [])
             envelope["categories"] = list(cats)
 
-        if self.should_submit:
-            outfile = os.path.join(self.outdir, self.config.master_doc + '.json')
-        else:
-            envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
+        envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
 
-            content_id = self.deconst_config.content_id_base
-            if content_id.endswith('/'):
-                content_id = content_id[:-1]
-            envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
-            outfile = os.path.join(self.deconst_config.envelope_dir, envelope_filename)
+        content_id = self.deconst_config.content_id_base
+        if content_id.endswith('/'):
+            content_id = content_id[:-1]
+        envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
+        outfile = os.path.join(self.deconst_config.envelope_dir, envelope_filename)
 
         with open(outfile, 'w', encoding="utf-8") as dumpfile:
             json.dump(envelope, dumpfile)
@@ -173,36 +165,3 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         """
         Nothing to see here
         """
-
-    def post_process_images(self, doctree):
-        """
-        Publish images to the content store. Modify the image reference with
-        the
-        """
-
-        SingleFileHTMLBuilder.post_process_images(self, doctree)
-
-        if self.should_submit:
-            for node in doctree.traverse(nodes.image):
-                node['uri'] = self._publish_entry(node['uri'])
-
-    def _publish_entry(self, srcfile):
-        (content_type, _) = mimetypes.guess_type(srcfile)
-
-        auth = 'deconst apikey="{}"'.format(
-            self.deconst_config.content_store_apikey)
-        headers = {"Authorization": auth}
-        verify = self.deconst_config.tls_verify
-
-        url = self.deconst_config.content_store_url + "assets"
-        basename = path.basename(srcfile)
-        if content_type:
-            payload = (basename, open(srcfile, 'rb'), content_type)
-        else:
-            payload = open(srcfile, 'rb')
-        files = {basename: payload}
-
-        response = requests.post(url, files=files, headers=headers,
-                                 verify=verify)
-        response.raise_for_status()
-        return response.json()[basename]

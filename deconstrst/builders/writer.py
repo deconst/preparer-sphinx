@@ -24,7 +24,6 @@ class OffsetHTMLTranslator(HTMLTranslator):
         self.asset_offsets = defaultdict(list)
 
         dc = self.builder.deconst_config
-        self.should_submit = not dc.skip_submit_reasons()
         self.asset_src_root = path.realpath('_images') # This is actually hardcoded in StandaloneHTMLBuilder
         self.asset_dest_root = path.realpath(dc.asset_dir)
 
@@ -33,31 +32,29 @@ class OffsetHTMLTranslator(HTMLTranslator):
         Record the offset for this asset reference.
         """
 
-        if not self.should_submit:
-            asset_src_path = path.realpath(node['uri'])
-            if asset_src_path.startswith(self.asset_src_root):
-                asset_rel_path = path.relpath(asset_src_path, self.asset_src_root)
-            else:
-                asset_rel_path = path.relpath(asset_src_path)
-            asset_dest_path = path.join(self.asset_dest_root, asset_rel_path)
+        asset_src_path = path.realpath(node['uri'])
+        if asset_src_path.startswith(self.asset_src_root):
+            asset_rel_path = path.relpath(asset_src_path, self.asset_src_root)
+        else:
+            asset_rel_path = path.relpath(asset_src_path)
+        asset_dest_path = path.join(self.asset_dest_root, asset_rel_path)
 
-            os.makedirs(path.dirname(asset_dest_path), exist_ok=True)
-            shutil.copyfile(asset_src_path, asset_dest_path)
-            node['uri'] = 'X'
+        os.makedirs(path.dirname(asset_dest_path), exist_ok=True)
+        shutil.copyfile(asset_src_path, asset_dest_path)
+        node['uri'] = 'X'
 
         super().visit_image(node)
 
-        if not self.should_submit:
-            chunk = self.body[-1]
-            chunk_match = RE_SRCATTR.search(chunk)
-            if not chunk_match:
-                msg = "Unable to find image tag placeholder src attribute within [{}]".format(self.body[-1])
-                raise Exception(msg)
+        chunk = self.body[-1]
+        chunk_match = RE_SRCATTR.search(chunk)
+        if not chunk_match:
+            msg = "Unable to find image tag placeholder src attribute within [{}]".format(self.body[-1])
+            raise Exception(msg)
 
-            chunk_index = len(self.body) - 1
-            chunk_offset = chunk_match.start(1)
+        chunk_index = len(self.body) - 1
+        chunk_offset = chunk_match.start(1)
 
-            self.asset_offsets[asset_rel_path].append(AssetOffset(chunk_index, chunk_offset))
+        self.asset_offsets[asset_rel_path].append(AssetOffset(chunk_index, chunk_offset))
 
     def calculate_offsets(self):
         """
