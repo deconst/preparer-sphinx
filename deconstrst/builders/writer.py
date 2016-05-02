@@ -36,7 +36,7 @@ class OffsetHTMLTranslator(HTMLTranslator):
         if asset_src_path.startswith(self.asset_src_root):
             asset_rel_path = path.relpath(asset_src_path, self.asset_src_root)
         else:
-            asset_rel_path = path.relpath(asset_src_path)
+            asset_rel_path = asset_src_path[1:]
         asset_dest_path = path.join(self.asset_dest_root, asset_rel_path)
 
         os.makedirs(path.dirname(asset_dest_path), exist_ok=True)
