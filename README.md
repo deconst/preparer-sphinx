@@ -2,7 +2,7 @@
 
 .rst :point_right: .json :point_right: :wrench: :point_right: content service
 
-[![Docker Repository on Quay.io](https://quay.io/repository/deconst/preparer-sphinx/status "Docker Repository on Quay.io")](https://quay.io/repository/deconst/preparer-sphinx)
+[![Build Status](https://travis-ci.org/deconst/preparer-sphinx.svg?branch=master)](https://travis-ci.org/deconst/preparer-sphinx) [![Docker Repository on Quay.io](https://quay.io/repository/deconst/preparer-sphinx/status "Docker Repository on Quay.io")](https://quay.io/repository/deconst/preparer-sphinx)
 
 The *deconst Sphinx preparer* builds [Sphinx documentation](http://sphinx-doc.org/contents.html) into a custom JSON metadata envelope and broadcasts it to a *Content Storage* service that performs storage and indexing for presentation and search.
 
