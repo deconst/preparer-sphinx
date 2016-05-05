@@ -1,0 +1,21 @@
+{
+  "asset_offsets": {},
+  "meta": {
+    "deconsttitle": "Custom Title"
+  },
+  "next": {
+    "url": "../morecategories/",
+    "title": "This page has an extra category"
+  },
+  "categories": [
+    "global category",
+    "common category"
+  ],
+  "layout_key": "default",
+  "title": "Custom Title",
+  "previous": {
+    "url": "../textstyles/",
+    "title": "Demonstrating Text Styles"
+  },
+  "body": "<div class=\"section\" id=\"this-page-has-a-custom-title\">\n<h1>This Page Has a Custom Title<a class=\"headerlink\" href=\"#this-page-has-a-custom-title\" title=\"Permalink to this headline\">¶</a></h1>\n<p>Deconst gives this page a custom title!</p>\n</div>\n"
+}

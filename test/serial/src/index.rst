@@ -12,4 +12,7 @@ Contents:
    :maxdepth: 2
 
    textstyles
+   customtitle
+   morecategories
+   unsearchable
    subdir/asset
