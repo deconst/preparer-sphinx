@@ -1,0 +1,22 @@
+{
+  "asset_offsets": {},
+  "meta": {
+    "deconstcategories": "common category, page category"
+  },
+  "next": {
+    "url": "../unsearchable/",
+    "title": "This page will not appear in search results"
+  },
+  "categories": [
+    "global category",
+    "page category",
+    "common category"
+  ],
+  "layout_key": "default",
+  "title": "This page has an extra category",
+  "previous": {
+    "url": "../customtitle/",
+    "title": "This Page Has a Custom Title"
+  },
+  "body": "<div class=\"section\" id=\"this-page-has-an-extra-category\">\n<h1>This page has an extra category<a class=\"headerlink\" href=\"#this-page-has-an-extra-category\" title=\"Permalink to this headline\">¶</a></h1>\n<p>It should have <code class=\"docutils literal\"><span class=\"pre\">common</span> <span class=\"pre\">category</span></code> in its categories once and <code class=\"docutils literal\"><span class=\"pre\">page</span> <span class=\"pre\">category</span></code> as well.</p>\n</div>\n"
+}
