@@ -16,7 +16,7 @@ sys.path.append(path.join(path.dirname(__file__), '..'))
 
 import deconstrst
 
-TESTCASE_ROOT = path.dirname(__file__)
+TESTCASE_ROOT = path.realpath(path.dirname(__file__))
 
 # Potential outcomes
 
@@ -53,10 +53,11 @@ class Testcase:
         return path.basename(self.root)
 
     def run(self):
-
         os.environ['CONTENT_ROOT'] = self.src_root
         os.environ['ENVELOPE_DIR'] = self.actual_envelope_root
-        os.environ['ASSET_ROOT'] = self.expected_envelope_root
+        os.environ['ASSET_DIR'] = self.actual_asset_root
+
+        rmtree(self.actual_root, ignore_errors=True)
 
         capture = io.StringIO()
         with redirect_stderr(capture):
@@ -144,7 +145,7 @@ class Testcase:
 
 testcases = []
 for entry in os.scandir(TESTCASE_ROOT):
-    if entry.is_dir():
+    if entry.is_dir() and not entry.name.startswith('_'):
         testcases.append(Testcase(entry.path))
 
 s = 's'
