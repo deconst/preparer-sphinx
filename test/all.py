@@ -102,9 +102,10 @@ class Testcase:
         assets = []
         for dirpath, dirnames, filenames in os.walk(root):
             for filename in filenames:
-                fullpath = path.join(dirpath, filename)
-                relpath = path.relpath(fullpath, root)
-                assets.append(relpath)
+                if not filename.startswith('.'):
+                    fullpath = path.join(dirpath, filename)
+                    relpath = path.relpath(fullpath, root)
+                    assets.append(relpath)
         return assets
 
     def report(self):
