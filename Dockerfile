@@ -1,11 +1,10 @@
 FROM alpine:3.3
 MAINTAINER Ash Wilson <ash.wilson@rackspace.com>
 
-RUN apk add --no-cache python3 && \
-    apk add --no-cache --virtual=build-dependencies wget ca-certificates && \
-    wget "https://bootstrap.pypa.io/get-pip.py" -O /dev/stdout | python3 && \
-    apk del build-dependencies
-
+RUN apk add --no-cache python3
+RUN python3 -m ensurepip
+RUN ln -s /usr/bin/python3 /usr/bin/python && \
+  ln -s /usr/bin/pip3 /usr/bin/pip
 RUN pip install --upgrade pip
 
 RUN adduser -D -g "" -u 1000 preparer
