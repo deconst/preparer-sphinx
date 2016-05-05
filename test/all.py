@@ -94,7 +94,7 @@ class Testcase:
                 try:
                     with open(fullpath, 'r') as ef:
                         envelopes[filename] = json.load(ef)
-                except (OSError, json.JSONDecoderError):
+                except json.JSONDecodeError:
                     pass
         return envelopes
 
