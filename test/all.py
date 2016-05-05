@@ -58,8 +58,8 @@ class Testcase:
         os.environ['ASSET_ROOT'] = self.expected_envelope_root
 
         capture = io.StringIO()
-        with redirect_stderr(self.output):
-            with redirect_stdout(self.output):
+        with redirect_stderr(capture):
+            with redirect_stdout(capture):
                 try:
                     deconstrst.main()
                     if self.compare():
