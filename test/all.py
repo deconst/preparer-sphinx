@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import json
 import os
 import io
 import sys
-import datadiff
 import traceback
+from diff import diff
 from os import path
 from shutil import rmtree
 from contextlib import redirect_stdout, redirect_stderr
@@ -79,8 +80,8 @@ class Testcase:
         actual_envelopes = self.envelope_set_from(self.actual_envelope_root)
         actual_assets = self.asset_set_from(self.actual_asset_root)
 
-        self.envelope_diff = datadiff.diff(actual_envelopes, expected_envelopes)
-        self.asset_diff = datadiff.diff(actual_assets, expected_assets)
+        self.envelope_diff = diff(actual_envelopes, expected_envelopes)
+        self.asset_diff = diff(actual_assets, expected_assets)
 
         return not self.envelope_diff and not self.asset_diff
 
@@ -125,8 +126,14 @@ class Testcase:
 
         if diff:
             report.write(colored('>> diff\n', 'cyan'))
-            report.write(self.envelope_diff.stringify())
-            report.write(self.asset_diff.stringify())
+            report.write(colored('envelopes\n', 'yellow'))
+            for diff in self.envelope_diff:
+                report.write(diff)
+                report.write('\n')
+            report.write(colored('\n\nassets\n', 'yellow'))
+            for diff in self.asset_diff:
+                report.write(diff)
+                report.write('\n')
 
         if stacktrace:
             report.write(colored('>> stacktrace\n', 'cyan'))
