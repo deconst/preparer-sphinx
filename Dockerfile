@@ -10,6 +10,7 @@ RUN pip install --upgrade pip
 RUN adduser -D -g "" -u 1000 preparer
 RUN mkdir -p /preparer /venv /usr/content-repo
 RUN chown -R preparer:preparer /preparer /venv
+ENV PYTHONPATH /preparer
 
 USER preparer
 
