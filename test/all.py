@@ -158,7 +158,8 @@ for testcase in testcases:
     elif testcase.outcome is ERROR:
         cprint('error', 'red')
 
-r = join([t.report() for t in testcases], '\n')
+r = '\n'.join(t.report() for t in testcases)
+print(r)
 
 if any(t.outcome is not OK for t in testcases):
     sys.exit(1)
