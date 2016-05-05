@@ -112,7 +112,7 @@ class Testcase:
         header, output, diff, stacktrace = False, False, False, False
 
         if self.outcome is FAIL:
-            header, diff = True, True
+            header, output, diff = True, True, True
         elif self.outcome is ERROR:
             header, output, stacktrace = True, True, True
 
