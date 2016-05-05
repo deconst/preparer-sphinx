@@ -38,7 +38,7 @@ class Testcase:
         self.expected_asset_root = path.join(self.expected_root, 'assets')
 
         scratch_dir = os.environ.get('SCRATCH_DIR', os.getcwd())
-        self.actual_root = path.join(scratch_dir, 'preparer-test-{}'.format(self.name))
+        self.actual_root = path.join(scratch_dir, 'preparer-test-{}'.format(self.name()))
         self.actual_envelope_root = path.join(self.actual_root, 'envelopes')
         self.actual_asset_root = path.join(self.actual_root, 'assets')
 
