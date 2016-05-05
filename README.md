@@ -1,6 +1,6 @@
 # Deconst Sphinx preparer
 
-.rst :point_right: .json :point_right: :wrench: :point_right: content service
+.rst :point_right: :wrench: :point_right: .json
 
 [![Build Status](https://travis-ci.org/deconst/preparer-sphinx.svg?branch=master)](https://travis-ci.org/deconst/preparer-sphinx) [![Docker Repository on Quay.io](https://quay.io/repository/deconst/preparer-sphinx/status "Docker Repository on Quay.io")](https://quay.io/repository/deconst/preparer-sphinx)
 
