@@ -67,7 +67,7 @@ class Testcase:
                         rmtree(self.actual_root)
                     else:
                         self.outcome = FAIL
-                except e:
+                except BaseException as e:
                     self.outcome = ERROR
                     self.stacktrace = traceback.format_exc(sys.exc_info())
         self.output = capture.getvalue()
@@ -92,7 +92,7 @@ class Testcase:
                 try:
                     with open(fullpath, 'r') as ef:
                         envelopes[filename] = json.load(ef)
-                except e:
+                except (OSError, json.JSONDecoderError):
                     pass
         return envelopes
 
