@@ -140,7 +140,9 @@ for entry in os.scandir(TESTCASE_ROOT):
     if entry.is_dir():
         testcases.append(Testcase(entry.path))
 
-s = len(testcases) == 1 ? '' : 's'
+s = 's'
+if len(testcases) == 1:
+    s = ''
 summary = '{} testcase{} discovered.'.format(len(testcases), s)
 cprint(summary, attrs=['bold'])
 
