@@ -22,11 +22,19 @@ class Configuration:
     """
 
     def __init__(self, env):
-        self.content_root = env.get("CONTENT_ROOT")
+        self.content_root = env.get("CONTENT_ROOT", None)
+        if not self.content_root:
+            self.content_root = os.getcwd()
+
         self.content_id_base = _normalize(env.get("CONTENT_ID_BASE"))
 
-        self.envelope_dir = env.get("ENVELOPE_DIR", path.join(os.getcwd(), '_build', 'deconst-envelopes'))
-        self.asset_dir = env.get("ASSET_DIR", path.join(os.getcwd(), '_build', 'deconst-assets'))
+        self.envelope_dir = env.get("ENVELOPE_DIR", None)
+        if not self.envelope_dir:
+            self.envelope_dir = path.join(self.content_root, '_build', 'deconst-envelopes')
+
+        self.asset_dir = env.get("ASSET_DIR", None)
+        if not self.asset_dir:
+            self.asset_dir = path.join(self.content_root, '_build', 'deconst-assets')
 
         self.meta = {}
         self.github_url = ""
