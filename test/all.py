@@ -11,6 +11,8 @@ from shutil import rmtree
 from contextlib import redirect_stdout, redirect_stderr
 from termcolor import colored, cprint
 
+sys.path.append(path.join(path.dirname(__file__), '..'))
+
 import deconstrst
 
 TESTCASE_ROOT = path.dirname(__file__)
