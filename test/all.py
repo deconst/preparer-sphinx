@@ -71,7 +71,7 @@ class Testcase:
                         self.outcome = FAIL
                 except BaseException as e:
                     self.outcome = ERROR
-                    self.stacktrace = traceback.format_exc(sys.exc_info())
+                    self.stacktrace = traceback.format_exc()
         self.output = capture.getvalue()
 
     def compare(self):
