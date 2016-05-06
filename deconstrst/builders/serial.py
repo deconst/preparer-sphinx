@@ -10,11 +10,14 @@ import shutil
 
 import requests
 from docutils import nodes
+from sphinx import addnodes
 from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
 from deconstrst.config import Configuration
 from .writer import OffsetHTMLTranslator
 
+
+TOC_DOCNAME = '_root_toc'
 
 class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
@@ -40,6 +43,22 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             self.git_root = self.deconst_config.get_git_root(os.getcwd())
         except FileNotFoundError:
             self.git_root = None
+
+        self.toc_content_id = self._content_id(TOC_DOCNAME)
+
+    def prepare_writing(self, docnames):
+        """
+        Emit the global TOC envelope for this content repository.
+        """
+
+        super().prepare_writing(docnames)
+
+        root = self.config.master_doc
+        toc_envelope = self._toc_envelope(root)
+        if toc_envelope:
+            toc_filename = self._envelope_path(self.toc_content_id)
+
+            super().dump_context(toc_envelope, toc_filename)
 
     def finish(self):
         """
@@ -114,18 +133,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
 
         # Write the envelope to ENVELOPE_DIR.
-        dirname, basename = path.split(context['current_page_name'])
-        if basename == 'index':
-            content_id_suffix = dirname
-        else:
-            content_id_suffix = path.join(dirname, basename)
-
-        content_id = path.join(self.deconst_config.content_id_base, content_id_suffix)
-        if content_id.endswith('/'):
-            content_id = content_id[:-1]
-
-        envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
-        envelope_path = path.join(self.deconst_config.envelope_dir, envelope_filename)
+        content_id = self._content_id(context['current_page_name'])
+        envelope_path = self._envelope_path(content_id)
 
         super().dump_context(envelope, envelope_path)
 
@@ -144,3 +153,67 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             "deconstunsearchable", self.config.deconst_default_unsearchable)
 
         super().handle_page(pagename, ctx, *args, **kwargs)
+
+    def _content_id(self, docname):
+        """
+        Construct the content ID corresponding to the document produced from a
+        docname.
+        """
+
+        dirname, basename = path.split(docname)
+        if basename == 'index':
+            content_id_suffix = dirname
+        else:
+            content_id_suffix = docname
+
+        content_id = path.join(self.deconst_config.content_id_base, content_id_suffix)
+        if content_id.endswith('/'):
+            content_id = content_id[:-1]
+
+        return content_id
+
+    def _envelope_path(self, content_id):
+        """
+        Return the destination path for the metadata envelope with the provided
+        content ID.
+        """
+
+        envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
+        envelope_path = path.join(self.deconst_config.envelope_dir, envelope_filename)
+        return envelope_path
+
+    def _toc_envelope(self, docname):
+        """
+        Generate a TOC envelope for the TOC rooted at a named document, ignoring
+        depth directives. Respect the :depth: argument on the toctree directive.
+
+        URLs within the TOC are replaced with "{{ to('<content-id>') }}"
+        expressions. At page presentation time, these are replaced with the
+        presented URL of the named envelope based on that envelope's current
+        mapping.
+        """
+
+        toctree = self.env.get_toctree_for(docname, self, False)
+        if not toctree:
+            return None
+
+        for refnode in toctree.traverse(nodes.reference):
+            if 'refuri' not in refnode:
+                continue
+
+            refstr = refnode['refuri']
+            parts = urllib.parse.urlparse(refstr)
+
+            target = "{{ to('" + self._content_id(parts.path) + "') }}"
+            if parts.fragment:
+                target += '#' + parts.fragment
+
+            print('refuri = {}'.format(target))
+            refnode['refuri'] = target
+
+        rendered_toc = self.render_partial(toctree)["body"]
+
+        return {
+            "unsearchable": True,
+            "body": rendered_toc
+        }
