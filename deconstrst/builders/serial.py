@@ -13,6 +13,7 @@ from docutils import nodes
 from sphinx import addnodes
 from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
+from sphinx.util.osutil import relative_uri
 from deconstrst.config import Configuration
 from .writer import OffsetHTMLTranslator
 
@@ -233,6 +234,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
                 refnode['refuri'] = target
 
+            toctreenode.replace_self(toctree)
+
             toctrees.append(toctree)
 
         # No toctree found.
@@ -246,6 +249,12 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
         # Render either the toctree alone, or the full doctree
         if full_render:
+            self.secnumbers = self.env.toc_secnumbers.get(docname, {})
+            self.fignumbers = self.env.toc_fignumbers.get(docname, {})
+            self.imgpath = relative_uri(self.get_target_uri(docname), '_images')
+            self.dlpath = relative_uri(self.get_target_uri(docname), '_downloads')
+            self.current_docname = docname
+
             rendered_toc = self.render_partial(doctree)['body']
         else:
             rendered_toc = self.render_partial(toctree)['body']
