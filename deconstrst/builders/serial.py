@@ -71,6 +71,12 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         envelope, instead.
         """
 
+        content_id = self._content_id(context['current_page_name'])
+
+        # Omit the TOC envelope. It's handled in prepare_writing().
+        if content_id == self.toc_content_id:
+            return
+
         # Merge this page's metadata with the repo-wide data.
         meta = self.deconst_config.meta.copy()
         meta.update(context['meta'])
@@ -131,7 +137,6 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
 
         # Write the envelope to ENVELOPE_DIR.
-        content_id = self._content_id(context['current_page_name'])
         envelope_path = self._envelope_path(content_id)
 
         super().dump_context(envelope, envelope_path)
