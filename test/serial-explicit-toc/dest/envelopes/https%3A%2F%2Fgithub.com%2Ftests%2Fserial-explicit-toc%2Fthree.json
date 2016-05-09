@@ -1,12 +1,15 @@
 {
+  "title": "Page three",
   "body": "<div class=\"section\" id=\"page-three\">\n<h1>Page three<a class=\"headerlink\" href=\"#page-three\" title=\"Permalink to this headline\">¶</a></h1>\n<p>Sunt cillum veniam minim aliqua qui veniam eu culpa. Mollit commodo proident quis irure cillum deserunt amet. Incididunt ex nulla ullamco excepteur qui ullamco eiusmod eu pariatur cillum ipsum deserunt qui tempor.</p>\n<div class=\"section\" id=\"section-one-on-page-three\">\n<h2>Section one on page three<a class=\"headerlink\" href=\"#section-one-on-page-three\" title=\"Permalink to this headline\">¶</a></h2>\n<p>Dolore consectetur labore occaecat dolor mollit aute et consequat qui. Anim Lorem et incididunt aliquip aliquip aute irure dolore dolor aute ea elit. Do aliqua labore magna id et ad enim cillum dolore veniam in nisi. Consequat velit cillum pariatur ipsum et quis consequat velit do officia nisi duis tempor ut cillum adipisicing proident. Eu eiusmod est velit ad exercitation nulla aute velit aliquip et est ea laboris incididunt. Anim ut occaecat magna qui officia occaecat exercitation proident ullamco.</p>\n</div>\n<div class=\"section\" id=\"section-two-on-page-three\">\n<h2>Section two on page three<a class=\"headerlink\" href=\"#section-two-on-page-three\" title=\"Permalink to this headline\">¶</a></h2>\n<p>Veniam mollit non ut nostrud Lorem anim minim nostrud voluptate. Anim ex non adipisicing irure qui Lorem magna aute cupidatat commodo minim qui ea. Ullamco ut velit esse amet anim laboris ipsum eu ut. Aliquip ad et cillum pariatur mollit incididunt labore voluptate Lorem irure exercitation fugiat eu non mollit ullamco. Enim culpa ut sunt incididunt amet id magna proident qui laboris reprehenderit ullamco veniam ex mollit ipsum. Aliquip ea quis exercitation Lorem aliqua excepteur velit commodo nisi et nostrud sunt magna.</p>\n</div>\n<div class=\"section\" id=\"section-three-on-page-three\">\n<h2>Section three on page three<a class=\"headerlink\" href=\"#section-three-on-page-three\" title=\"Permalink to this headline\">¶</a></h2>\n<p>Aliquip fugiat ea sunt sit duis cupidatat consequat amet ex consectetur Lorem aliqua fugiat proident sunt dolor. Est ut nulla esse esse anim voluptate occaecat qui Lorem. Id cillum est consequat consequat cupidatat mollit nisi exercitation laboris consectetur velit ad laborum. Cillum amet et qui sunt nostrud enim enim. Excepteur officia mollit commodo ad aute culpa anim aliqua deserunt excepteur quis aliqua. Eiusmod labore do ex pariatur amet sint id aute pariatur aliquip in ad commodo duis. Minim velit pariatur et consequat reprehenderit enim velit amet ad tempor fugiat esse cillum.</p>\n</div>\n</div>\n",
   "toc": "<ul>\n<li><a class=\"reference internal\" href=\"#\">Page three</a><ul>\n<li><a class=\"reference internal\" href=\"#section-one-on-page-three\">Section one on page three</a></li>\n<li><a class=\"reference internal\" href=\"#section-two-on-page-three\">Section two on page three</a></li>\n<li><a class=\"reference internal\" href=\"#section-three-on-page-three\">Section three on page three</a></li>\n</ul>\n</li>\n</ul>\n",
-  "title": "Page three",
+  "meta": {},
   "layout_key": "default",
   "asset_offsets": {},
-  "meta": {},
   "previous": {
     "url": "../two/",
     "title": "Page two"
+  },
+  "addenda": {
+    "repository_toc": "https://github.com/tests/serial-explicit-toc/_toc"
   }
 }

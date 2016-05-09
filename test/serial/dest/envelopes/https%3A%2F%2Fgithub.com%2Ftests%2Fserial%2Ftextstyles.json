@@ -1,9 +1,5 @@
 {
   "title": "Demonstrating Text Styles",
-  "previous": {
-    "title": "Welcome to Serial Builder Test's documentation!",
-    "url": "../"
-  },
   "body": "<div class=\"section\" id=\"demonstrating-text-styles\">\n<h1>Demonstrating Text Styles<a class=\"headerlink\" href=\"#demonstrating-text-styles\" title=\"Permalink to this headline\">¶</a></h1>\n<p>This line includes some <em>italic text</em>.</p>\n<p>This one does some <strong>bolding</strong> for <strong>more emphasis</strong> because <strong>why not</strong>.</p>\n<p>And this line uses <code class=\"docutils literal\"><span class=\"pre\">monospaced</span> <span class=\"pre\">text</span></code>.</p>\n</div>\n",
   "meta": {},
   "categories": [
@@ -15,5 +11,12 @@
   "next": {
     "title": "This Page Has a Custom Title",
     "url": "../customtitle/"
+  },
+  "previous": {
+    "title": "Welcome to Serial Builder Test's documentation!",
+    "url": "../"
+  },
+  "addenda": {
+    "repository_toc": "https://github.com/tests/serial/_toc"
   }
 }
