@@ -58,6 +58,9 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         if toc_envelope:
             toc_filename = self._envelope_path(self.toc_content_id)
             super().dump_context(toc_envelope, toc_filename)
+            self.toc_generated = True
+        else:
+            self.toc_generated = False
 
     def finish(self):
         """
@@ -136,6 +139,10 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
         # Inject asset offsets so the submitter can inject asset URLs.
         envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
+
+        # If this repository has a TOC, reference it as an addenda
+        if self.toc_generated:
+            envelope["addenda"] = {"repository_toc": self.toc_content_id}
 
         # Write the envelope to ENVELOPE_DIR.
         envelope_path = self._envelope_path(content_id)
