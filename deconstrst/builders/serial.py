@@ -17,7 +17,7 @@ from deconstrst.config import Configuration
 from .writer import OffsetHTMLTranslator
 
 
-TOC_DOCNAME = '_root_toc'
+TOC_DOCNAME = '_toc'
 
 class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
@@ -53,11 +53,9 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
         super().prepare_writing(docnames)
 
-        root = self.config.master_doc
-        toc_envelope = self._toc_envelope(root)
+        toc_envelope = self._toc_envelope()
         if toc_envelope:
             toc_filename = self._envelope_path(self.toc_content_id)
-
             super().dump_context(toc_envelope, toc_filename)
 
     def finish(self):
@@ -182,10 +180,14 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         envelope_path = path.join(self.deconst_config.envelope_dir, envelope_filename)
         return envelope_path
 
-    def _toc_envelope(self, docname):
+    def _toc_envelope(self):
         """
-        Generate a TOC envelope for the TOC rooted at a named document, ignoring
-        depth directives. Respect the :depth: argument on the toctree directive.
+        Generate an envelope containing the TOC for this content repository.
+
+        If the repository contains a document named "_toc.rst", render its
+        entire doctree as the TOC envelope's body. Otherwise, extract the
+        toctree from the repository's master document (usually "index.rst"),
+        ignore any :hidden: directive arguments, and render it alone.
 
         URLs within the TOC are replaced with "{{ to('<content-id>') }}"
         expressions. At page presentation time, these are replaced with the
@@ -193,25 +195,55 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         mapping.
         """
 
-        toctree = self.env.get_toctree_for(docname, self, False)
-        if not toctree:
-            return None
+        if '_toc' in self.env.found_docs:
+            docname = '_toc'
+            full_render = True
+            includehidden = False
+        else:
+            docname = self.config.master_doc
+            full_render = False
+            includehidden = True
 
-        for refnode in toctree.traverse(nodes.reference):
-            if 'refuri' not in refnode:
-                continue
+        doctree = self.env.get_doctree(docname)
 
-            refstr = refnode['refuri']
-            parts = urllib.parse.urlparse(refstr)
+        # Identify toctree nodes from the chosen document
+        toctrees = []
+        for toctreenode in doctree.traverse(addnodes.toctree):
+            toctree = self.env.resolve_toctree(docname, self, toctreenode,
+                                               prune=True,
+                                               includehidden=includehidden,
+                                               maxdepth=0)
 
-            target = "{{ to('" + self._content_id(parts.path) + "') }}"
-            if parts.fragment:
-                target += '#' + parts.fragment
+            # Rewrite refuris from this resolved toctree
+            for refnode in toctree.traverse(nodes.reference):
+                if 'refuri' not in refnode:
+                    continue
 
-            print('refuri = {}'.format(target))
-            refnode['refuri'] = target
+                refstr = refnode['refuri']
+                parts = urllib.parse.urlparse(refstr)
 
-        rendered_toc = self.render_partial(toctree)["body"]
+                target = "{{ to('" + self._content_id(parts.path) + "') }}"
+                if parts.fragment:
+                    target += '#' + parts.fragment
+
+                refnode['refuri'] = target
+
+            toctrees.append(toctree)
+
+        # No toctree found.
+        if not toctrees:
+            return
+
+        # Consolidate multiple toctrees
+        toctree = toctrees[0]
+        for t in toctrees[1:]:
+            toctree.extend(t.children)
+
+        # Render either the toctree alone, or the full doctree
+        if full_render:
+            rendered_toc = self.render_partial(doctree)['body']
+        else:
+            rendered_toc = self.render_partial(toctree)['body']
 
         return {
             "unsearchable": True,
