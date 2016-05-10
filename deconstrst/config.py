@@ -40,6 +40,11 @@ class Configuration:
         self.github_url = ""
         self.github_branch = "master"
 
+        try:
+            self.git_root = self._get_git_root(os.getcwd())
+        except FileNotFoundError:
+            self.git_root = None
+
     def apply_file(self, f):
         """
         Parse the contents of an open filehandle as JSON and apply recognized
@@ -71,17 +76,18 @@ class Configuration:
         else:
             self.github_branch = "master"
 
-    def get_git_root(self, d):
+    def _get_git_root(self, d):
         """
         Walk up until we find the ".git" directory, and return its parent
         """
-        if(path.isdir(path.join(d, '.git'))):
+
+        if path.isdir(path.join(d, '.git')):
             return d
 
-        if(d == '/'):
+        if d == '/':
             raise FileNotFoundError
 
-        return self.get_git_root(path.realpath(path.join(d, '..')))
+        return self._get_git_root(path.realpath(path.join(d, '..')))
 
     def missing_values(self):
         """

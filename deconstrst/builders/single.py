@@ -11,11 +11,13 @@ import urllib.parse
 import requests
 from docutils import nodes
 from sphinx.builders.html import SingleFileHTMLBuilder
+from sphinx.util import jsonimpl
 from sphinx.util.osutil import relative_uri
 from sphinx.util.console import bold
 from docutils.io import StringOutput
 from deconstrst.config import Configuration
-from .writer import OffsetHTMLTranslator
+from .envelope import Envelope
+from .common import init_builder
 
 
 class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
@@ -26,20 +28,8 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
     name = 'deconst-single'
 
     def init(self):
-        SingleFileHTMLBuilder.init(self)
-
-        self.translator_class = OffsetHTMLTranslator
-
-        self.deconst_config = Configuration(os.environ)
-
-        if os.path.exists("_deconst.json"):
-            with open("_deconst.json", "r", encoding="utf-8") as cf:
-                self.deconst_config.apply_file(cf)
-
-        try:
-            self.git_root = self.deconst_config.get_git_root(os.getcwd())
-        except FileNotFoundError:
-            self.git_root = None
+        super().init()
+        init_builder(self)
 
     def fix_refuris(self, tree):
         """
@@ -63,7 +53,16 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
             refnode['refuri'] = refuri[hashindex:]
 
-    def write(self, *ignored):
+    def handle_page(self, pagename, context, **kwargs):
+        """
+        Override to call write_context.
+        """
+
+        context['current_page_name'] = pagename
+        self.add_sidebars(pagename, context)
+        self.write_context(context)
+
+    def _old_write(self, *ignored):
         docnames = self.env.all_docs
 
         self.info(bold('preparing documents... '), nonl=True)
@@ -152,7 +151,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         with open(outfile, 'w', encoding="utf-8") as dumpfile:
             json.dump(envelope, dumpfile)
 
-    def write_body(self, doctree):
+    def _old_write_body(self, doctree):
         destination = StringOutput(encoding='utf-8')
         doctree.settings = self.docsettings
 
@@ -165,3 +164,26 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         """
         Nothing to see here
         """
+
+    def write_context(self, context):
+        """
+        Write a derived metadata envelope to disk.
+        """
+
+        docname = context['current_page_name']
+        per_page_meta = self.env.metadata[docname]
+
+        local_toc = None
+        if context['display_toc']:
+            local_toc = context['toc']
+
+        envelope = Envelope(docname=docname,
+                            body=context['body'],
+                            title=context['title'],
+                            toc=local_toc,
+                            builder=self,
+                            deconst_config=self.deconst_config,
+                            per_page_meta=per_page_meta)
+
+        with open(envelope.serialization_path(), 'w', encoding="utf-8") as f:
+            jsonimpl.dump(envelope.serialization_payload(), f)

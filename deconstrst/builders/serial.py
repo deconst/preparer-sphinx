@@ -15,7 +15,8 @@ from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
 from sphinx.util.osutil import relative_uri
 from deconstrst.config import Configuration
-from .writer import OffsetHTMLTranslator
+from .envelope import Envelope
+from .common import init_builder, derive_content_id
 
 
 TOC_DOCNAME = '_toc'
@@ -30,22 +31,10 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     out_suffix = '.json'
 
     def init(self):
-        JSONHTMLBuilder.init(self)
+        super().init()
+        init_builder(self)
 
-        self.translator_class = OffsetHTMLTranslator
-
-        self.deconst_config = Configuration(os.environ)
-
-        if os.path.exists("_deconst.json"):
-            with open("_deconst.json", "r", encoding="utf-8") as cf:
-                self.deconst_config.apply_file(cf)
-
-        try:
-            self.git_root = self.deconst_config.get_git_root(os.getcwd())
-        except FileNotFoundError:
-            self.git_root = None
-
-        self.toc_content_id = self._content_id(TOC_DOCNAME)
+        self.toc_envelope = None
 
     def prepare_writing(self, docnames):
         """
@@ -54,13 +43,19 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
         super().prepare_writing(docnames)
 
-        toc_envelope = self._toc_envelope()
-        if toc_envelope:
-            toc_filename = self._envelope_path(self.toc_content_id)
-            super().dump_context(toc_envelope, toc_filename)
-            self.toc_generated = True
-        else:
-            self.toc_generated = False
+        self.toc_envelope = self._toc_envelope()
+        if self.toc_envelope:
+            self.dump_context(self.toc_envelope.serialization_payload(),
+                              self.toc_envelope.serialization_path())
+
+    def handle_page(self, pagename, context, **kwargs):
+        """
+        Override to call write_context.
+        """
+
+        context['current_page_name'] = pagename
+        self.add_sidebars(pagename, context)
+        self.write_context(context)
 
     def finish(self):
         """
@@ -69,129 +64,40 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         Also, the search indices and so on aren't necessary.
         """
 
-    def dump_context(self, context, filename):
+    def write_context(self, context):
         """
         Override the default serialization code to save a derived metadata
         envelope, instead.
         """
 
-        content_id = self._content_id(context['current_page_name'])
+        docname = context['current_page_name']
+        per_page_meta = self.env.metadata[docname]
+
+        local_toc = None
+        if context['display_toc']:
+            local_toc = context['toc']
+
+        envelope = Envelope(docname=docname,
+                            body=context['body'],
+                            title=context['title'],
+                            toc=local_toc,
+                            builder=self,
+                            deconst_config=self.deconst_config,
+                            per_page_meta=per_page_meta)
 
         # Omit the TOC envelope. It's handled in prepare_writing().
-        if content_id == self.toc_content_id:
+        if envelope.content_id == self.toc_envelope.content_id:
             return
 
-        # Merge this page's metadata with the repo-wide data.
-        meta = self.deconst_config.meta.copy()
-        meta.update(context['meta'])
+        envelope.set_next(context.get('next'))
+        envelope.set_previous(context.get('prev'))
 
-        if self.git_root != None and self.deconst_config.github_url != "":
-            # current_page_name has no extension, and it _might_ not be .rst
-            fileglob = path.join(
-                os.getcwd(), context["current_page_name"] + ".*"
-            )
+        # If this repository has a TOC, reference it as an addenda.
+        if self.toc_envelope:
+            envelope.add_addenda('repository_toc', self.toc_envelope.content_id)
 
-            edit_segments = [
-                self.deconst_config.github_url,
-                "edit",
-                self.deconst_config.github_branch,
-                path.relpath(glob.glob(fileglob)[0], self.git_root)
-            ]
-
-            meta["github_edit_url"] = '/'.join(segment.strip('/') for segment in edit_segments)
-
-        envelope = {
-            "body": context["body"],
-            "title": context["deconst_title"],
-            "layout_key": context["deconst_layout_key"],
-            "meta": meta
-        }
-
-        if context["deconst_unsearchable"] is not None:
-            unsearchable = context["deconst_unsearchable"] in ("true", True)
-            envelope["unsearchable"] = unsearchable
-
-        page_cats = context["deconst_categories"]
-        global_cats = self.config.deconst_categories
-        if page_cats is not None or global_cats is not None:
-            cats = set()
-            if page_cats is not None:
-                cats.update(re.split("\s*,\s*", page_cats))
-            cats.update(global_cats or [])
-            envelope["categories"] = list(cats)
-
-        n = context.get("next")
-        p = context.get("prev")
-
-        if n:
-            envelope["next"] = {
-                "url": n["link"],
-                "title": n["title"]
-            }
-        if p:
-            envelope["previous"] = {
-                "url": p["link"],
-                "title": p["title"]
-            }
-
-        if context["display_toc"]:
-            envelope["toc"] = context["toc"]
-
-        # Inject asset offsets so the submitter can inject asset URLs.
-        envelope["asset_offsets"] = self.docwriter.visitor.calculate_offsets()
-
-        # If this repository has a TOC, reference it as an addenda
-        if self.toc_generated:
-            envelope["addenda"] = {"repository_toc": self.toc_content_id}
-
-        # Write the envelope to ENVELOPE_DIR.
-        envelope_path = self._envelope_path(content_id)
-
-        super().dump_context(envelope, envelope_path)
-
-    def handle_page(self, pagename, ctx, *args, **kwargs):
-        """
-        Override the default serialization code to save a derived metadata
-        envelope, instead.
-        """
-
-        meta = self.env.metadata[pagename]
-        ctx["deconst_layout_key"] = meta.get(
-            "deconstlayout", self.config.deconst_default_layout)
-        ctx["deconst_title"] = meta.get("deconsttitle", ctx["title"])
-        ctx["deconst_categories"] = meta.get("deconstcategories")
-        ctx["deconst_unsearchable"] = meta.get(
-            "deconstunsearchable", self.config.deconst_default_unsearchable)
-
-        super().handle_page(pagename, ctx, *args, **kwargs)
-
-    def _content_id(self, docname):
-        """
-        Construct the content ID corresponding to the document produced from a
-        docname.
-        """
-
-        dirname, basename = path.split(docname)
-        if basename == 'index':
-            content_id_suffix = dirname
-        else:
-            content_id_suffix = docname
-
-        content_id = path.join(self.deconst_config.content_id_base, content_id_suffix)
-        if content_id.endswith('/'):
-            content_id = content_id[:-1]
-
-        return content_id
-
-    def _envelope_path(self, content_id):
-        """
-        Return the destination path for the metadata envelope with the provided
-        content ID.
-        """
-
-        envelope_filename = urllib.parse.quote(content_id, safe='') + '.json'
-        envelope_path = path.join(self.deconst_config.envelope_dir, envelope_filename)
-        return envelope_path
+        self.dump_context(envelope.serialization_payload(),
+                          envelope.serialization_path())
 
     def _toc_envelope(self):
         """
@@ -235,7 +141,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                 refstr = refnode['refuri']
                 parts = urllib.parse.urlparse(refstr)
 
-                target = "{{ to('" + self._content_id(parts.path) + "') }}"
+                target = "{{ to('" + derive_content_id(self.deconst_config, parts.path) + "') }}"
                 if parts.fragment:
                     target += '#' + parts.fragment
 
@@ -247,7 +153,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
         # No toctree found.
         if not toctrees:
-            return
+            return None
 
         # Consolidate multiple toctrees
         toctree = toctrees[0]
@@ -265,8 +171,12 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             rendered_toc = self.render_partial(doctree)['body']
         else:
             rendered_toc = self.render_partial(toctree)['body']
+        self.docwriter = self._publisher.writer
 
-        return {
-            "unsearchable": True,
-            "body": rendered_toc
-        }
+        return Envelope(docname=TOC_DOCNAME,
+                        body=rendered_toc,
+                        title=None,
+                        toc=None,
+                        builder=self,
+                        deconst_config=self.deconst_config,
+                        per_page_meta={'deconstunsearchable': True})
