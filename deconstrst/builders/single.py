@@ -1,21 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import os
 import re
-import mimetypes
-import json
-from os import path
-import glob
-import urllib.parse
 
-import requests
 from docutils import nodes
 from sphinx.builders.html import SingleFileHTMLBuilder
 from sphinx.util import jsonimpl
-from sphinx.util.osutil import relative_uri
-from sphinx.util.console import bold
-from docutils.io import StringOutput
-from deconstrst.config import Configuration
 from .envelope import Envelope
 from .common import init_builder
 
