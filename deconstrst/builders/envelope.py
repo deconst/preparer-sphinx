@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import urllib
 import re
 from os import path
