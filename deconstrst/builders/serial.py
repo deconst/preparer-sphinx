@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import os
-import re
-import mimetypes
-from os import path
-import glob
 import urllib.parse
-import shutil
 
-import requests
 from docutils import nodes
 from sphinx import addnodes
 from sphinx.builders.html import JSONHTMLBuilder
 from sphinx.util import jsonimpl
 from sphinx.util.osutil import relative_uri
-from deconstrst.config import Configuration
-from .envelope import Envelope
 from .common import init_builder, derive_content_id
+from .envelope import Envelope
 
 
 TOC_DOCNAME = '_toc'
