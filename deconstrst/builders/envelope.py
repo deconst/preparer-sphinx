@@ -41,6 +41,7 @@ class Envelope:
         self._populate_categories()
         self._populate_asset_offsets()
         self._populate_content_id()
+        self._override_title()
 
     def set_next(self, n):
         if not n:
@@ -170,3 +171,11 @@ class Envelope:
         """
 
         self.content_id = derive_content_id(self.deconst_config, self.docname)
+
+    def _override_title(self):
+        """
+        Override the envelope's title if requested by page metadata.
+        """
+
+        if 'deconsttitle' in self.per_page_meta:
+            self.title = self.per_page_meta['deconsttitle']
