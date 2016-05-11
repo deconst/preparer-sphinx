@@ -121,7 +121,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         # Identify toctree nodes from the chosen document
         toctrees = []
         for toctreenode in doctree.traverse(addnodes.toctree):
-            toctree = self.env.resolve_toctree(docname, self, toctreenode,
+            toctree = self.env.resolve_toctree(self.config.master_doc, self, toctreenode,
                                                prune=True,
                                                includehidden=includehidden,
                                                maxdepth=0)
