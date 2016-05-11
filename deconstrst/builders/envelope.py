@@ -12,7 +12,7 @@ class Envelope:
     """
 
     def __init__(self, docname, body, title, toc, builder, deconst_config,
-                 per_page_meta):
+                 per_page_meta, docwriter):
         self.docname = docname
 
         self.body = body
@@ -33,6 +33,7 @@ class Envelope:
         self.builder = builder
         self.deconst_config = deconst_config
         self.per_page_meta = per_page_meta
+        self.docwriter = docwriter
 
         self._populate_meta()
         self._populate_git()
@@ -163,7 +164,7 @@ class Envelope:
         Read stored asset offsets from the docwriter.
         """
 
-        self.asset_offsets = self.builder.docwriter.visitor.calculate_offsets()
+        self.asset_offsets = self.docwriter.visitor.calculate_offsets()
 
     def _populate_content_id(self):
         """

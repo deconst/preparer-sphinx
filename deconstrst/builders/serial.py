@@ -75,7 +75,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                             toc=local_toc,
                             builder=self,
                             deconst_config=self.deconst_config,
-                            per_page_meta=per_page_meta)
+                            per_page_meta=per_page_meta,
+                            docwriter=self.docwriter)
 
         # Omit the TOC envelope. It's handled in prepare_writing().
         if envelope.content_id == self.toc_envelope.content_id:
@@ -163,7 +164,6 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             rendered_toc = self.render_partial(doctree)['body']
         else:
             rendered_toc = self.render_partial(toctree)['body']
-        self.docwriter = self._publisher.writer
 
         return Envelope(docname=TOC_DOCNAME,
                         body=rendered_toc,
@@ -171,4 +171,5 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                         toc=None,
                         builder=self,
                         deconst_config=self.deconst_config,
-                        per_page_meta={'deconstunsearchable': True})
+                        per_page_meta={'deconstunsearchable': True},
+                        docwriter=self._publisher.writer)
