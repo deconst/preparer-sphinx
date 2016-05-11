@@ -1,4 +1,10 @@
 {
   "body": "<ul>\n<li class=\"toctree-l1\"><a class=\"reference internal\" href=\"{{ to('https://github.com/tests/serial/textstyles') }}\">Demonstrating Text Styles</a></li>\n<li class=\"toctree-l1\"><a class=\"reference internal\" href=\"{{ to('https://github.com/tests/serial/customtitle') }}\">This Page Has a Custom Title</a></li>\n<li class=\"toctree-l1\"><a class=\"reference internal\" href=\"{{ to('https://github.com/tests/serial/morecategories') }}\">This page has an extra category</a></li>\n<li class=\"toctree-l1\"><a class=\"reference internal\" href=\"{{ to('https://github.com/tests/serial/unsearchable') }}\">This page will not appear in search results</a></li>\n<li class=\"toctree-l1\"><a class=\"reference internal\" href=\"{{ to('https://github.com/tests/serial/subdir/asset') }}\">This Page References An Asset</a></li>\n</ul>\n",
-  "unsearchable": true
+  "unsearchable": true,
+  "categories": ["common category", "global category"],
+  "asset_offsets": {},
+  "layout_key": "default",
+  "meta": {
+    "deconstunsearchable": true
+  }
 }
