@@ -59,6 +59,11 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
         """
 
         context['current_page_name'] = pagename
+
+        titlenode = self.env.longtitles.get(pagename)
+        renderedtitle = self.render_partial(titlenode)['title']
+        context['title'] = renderedtitle
+
         self.add_sidebars(pagename, context)
         self.write_context(context)
 
