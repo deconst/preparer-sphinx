@@ -79,7 +79,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                             docwriter=self.docwriter)
 
         # Omit the TOC envelope. It's handled in prepare_writing().
-        if envelope.content_id == self.toc_envelope.content_id:
+        if self.toc_envelope and envelope.content_id == self.toc_envelope.content_id:
             return
 
         envelope.set_next(context.get('next'))
