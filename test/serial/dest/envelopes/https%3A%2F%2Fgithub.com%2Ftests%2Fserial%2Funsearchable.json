@@ -1,22 +1,25 @@
 {
-  "asset_offsets": {},
+  "title": "This page will not appear in search results",
+  "body": "<div class=\"section\" id=\"this-page-will-not-appear-in-search-results\">\n<h1>This page will not appear in search results<a class=\"headerlink\" href=\"#this-page-will-not-appear-in-search-results\" title=\"Permalink to this headline\">¶</a></h1>\n<p>Because the <code class=\"docutils literal\"><span class=\"pre\">deconstunsearchable</span></code> page attribute is set to &quot;true&quot;.</p>\n</div>\n",
   "meta": {
     "deconstunsearchable": "true"
-  },
-  "next": {
-    "url": "../subdir/asset/",
-    "title": "This Page References An Asset"
   },
   "categories": [
     "global category",
     "common category"
   ],
+  "asset_offsets": {},
   "layout_key": "default",
-  "title": "This page will not appear in search results",
+  "unsearchable": true,
+  "next": {
+    "url": "../subdir/asset/",
+    "title": "This Page References An Asset"
+  },
   "previous": {
     "url": "../morecategories/",
     "title": "This page has an extra category"
   },
-  "unsearchable": true,
-  "body": "<div class=\"section\" id=\"this-page-will-not-appear-in-search-results\">\n<h1>This page will not appear in search results<a class=\"headerlink\" href=\"#this-page-will-not-appear-in-search-results\" title=\"Permalink to this headline\">¶</a></h1>\n<p>Because the <code class=\"docutils literal\"><span class=\"pre\">deconstunsearchable</span></code> page attribute is set to &quot;true&quot;.</p>\n</div>\n"
+  "addenda": {
+    "repository_toc": "https://github.com/tests/serial/_toc"
+  }
 }

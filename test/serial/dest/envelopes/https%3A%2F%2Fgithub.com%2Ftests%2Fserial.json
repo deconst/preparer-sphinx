@@ -11,5 +11,8 @@
   "next": {
     "title": "Demonstrating Text Styles",
     "url": "textstyles/"
+  },
+  "addenda": {
+    "repository_toc": "https://github.com/tests/serial/_toc"
   }
 }

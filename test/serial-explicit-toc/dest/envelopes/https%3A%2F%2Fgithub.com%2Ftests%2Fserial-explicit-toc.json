@@ -1,0 +1,14 @@
+{
+  "body": "<div class=\"section\" id=\"welcome-to-serial-toc-s-documentation\">\n<h1>Welcome to Serial TOC's documentation!<a class=\"headerlink\" href=\"#welcome-to-serial-toc-s-documentation\" title=\"Permalink to this headline\">¶</a></h1>\n<p>No TOC here.</p>\n<div class=\"toctree-wrapper compound\">\n</div>\n</div>\n",
+  "title": "Welcome to Serial TOC's documentation!",
+  "meta": {},
+  "layout_key": "default",
+  "asset_offsets": {},
+  "next": {
+    "url": "one/",
+    "title": "Page one"
+  },
+  "addenda": {
+    "repository_toc": "https://github.com/tests/serial-explicit-toc/_toc"
+  }
+}
