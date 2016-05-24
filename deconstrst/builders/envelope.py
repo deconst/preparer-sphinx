@@ -117,7 +117,7 @@ class Envelope:
         if self.deconst_config.git_root and self.deconst_config.github_url:
             full_path = path.join(os.getcwd(),
                                   self.builder.env.srcdir,
-                                  self.docname + '.' + self.builder.config.source_suffix[0])
+                                  self.docname + self.builder.config.source_suffix[0])
 
             edit_segments = [
                 self.deconst_config.github_url,
