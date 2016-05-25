@@ -134,6 +134,10 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                 refstr = refnode['refuri']
                 parts = urllib.parse.urlparse(refstr)
 
+                if parts.scheme or parts.netloc:
+                    # Absolute URL
+                    continue
+
                 target = "{{ to('" + derive_content_id(self.deconst_config, parts.path) + "') }}"
                 if parts.fragment:
                     target += '#' + parts.fragment
