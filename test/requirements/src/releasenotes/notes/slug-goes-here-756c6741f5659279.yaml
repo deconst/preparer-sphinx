@@ -1,0 +1,20 @@
+---
+prelude: >
+    Hey look it's a prelude
+features:
+  - Is now awesome
+  - Sucks less
+issues:
+  - Completely fictitious
+upgrade:
+  - Nothing, because it's all made up
+deprecations:
+  - Everything that worked before is broken
+critical:
+  - AAAAAAAAAH
+security:
+  - Posts all of your private keys to the Internets
+fixes:
+  - 96% fewer crashes to desktop
+other:
+  - Hooray
