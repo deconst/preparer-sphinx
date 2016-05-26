@@ -167,7 +167,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
             rendered_toc = self.render_partial(doctree)['body']
         else:
-            rendered_toc = self.render_partial(toctree)['body']
+            # Include the wrapper <div> for consistent markup.
+            rendered_toc = self.render_partial(toctree.parent)['body']
 
         return Envelope(docname=TOC_DOCNAME,
                         body=rendered_toc,
