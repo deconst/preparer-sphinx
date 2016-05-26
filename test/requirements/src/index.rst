@@ -7,8 +7,7 @@ Welcome to Requirements's documentation!
 ========================================
 
 .. release-notes:: Release Notes
-
-Contents:
+   :relnotessubdir: test/requirements/src/releasenotes
 
 .. toctree::
    :maxdepth: 2
