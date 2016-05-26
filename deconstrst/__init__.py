@@ -58,12 +58,17 @@ def install_requirements():
     the content root.
     """
 
-    if not os.path.exists('requirements.txt'):
+    reqfile = None
+    if os.path.exists('deconst-requirements.txt'):
+        reqfile = 'deconst-requirements.txt'
+    elif os.path.exists('requirements.txt'):
+        reqfile = 'requirements.txt'
+    else:
         return
 
     dependencies = []
 
-    with open('requirements.txt', 'r', encoding='utf-8') as rf:
+    with open(reqfile, 'r', encoding='utf-8') as rf:
         for line in rf:
             if line.startswith('#'):
                 continue
@@ -74,7 +79,7 @@ def install_requirements():
 
             dependencies.append(stripped)
 
-    print("Installing dependencies: {}.".format(', '.join(dependencies)))
+    print("Installing dependencies from {}: {}.".format(reqfile, ', '.join(dependencies)))
     pip.main(['install', '--quiet'] + dependencies)
 
 if __name__ == '__main__':
