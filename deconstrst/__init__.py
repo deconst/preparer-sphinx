@@ -80,7 +80,7 @@ def install_requirements():
             dependencies.append(stripped)
 
     print("Installing dependencies from {}: {}.".format(reqfile, ', '.join(dependencies)))
-    pip.main(['install', '--quiet'] + dependencies)
+    pip.main(['install'] + dependencies)
 
 if __name__ == '__main__':
     main()
