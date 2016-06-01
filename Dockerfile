@@ -1,7 +1,7 @@
 FROM alpine:3.3
 MAINTAINER Ash Wilson <ash.wilson@rackspace.com>
 
-RUN apk add --no-cache python3
+RUN apk add --no-cache python3 git
 RUN python3 -m ensurepip
 RUN ln -s /usr/bin/python3 /usr/bin/python && \
   ln -s /usr/bin/pip3 /usr/bin/pip
