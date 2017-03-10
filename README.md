@@ -12,10 +12,10 @@ To run the Sphinx preparer locally, you'll need to install:
 
  * [Docker](https://docs.docker.com/installation/#installation) for your platform.
 
-Once you have Docker set up, export any desired configuration variables and run `deconst-preparer-sphinx.sh` with the path to any Sphinx-based content repository.
+Once you have Docker set up, export any desired configuration variables and run `deconst-preparer-sphinx.sh` with the absolute path to any Sphinx-based content repository.
 
 ```bash
-./deconst-preparer-sphinx.sh /path/to/control-repo
+./deconst-preparer-sphinx.sh /absolute/path/to/content-repo
 ```
 
 ### Configuration
