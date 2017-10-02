@@ -18,7 +18,8 @@ RUN pyvenv /venv
 ENV PATH /venv/bin:${PATH}
 
 COPY ./requirements.txt /preparer/requirements.txt
-RUN pip install -r /preparer/requirements.txt
+RUN pip install --upgrade pip &&\
+  pip install -r /preparer/requirements.txt
 COPY . /preparer
 
 VOLUME /usr/content-repo
