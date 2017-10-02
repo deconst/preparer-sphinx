@@ -8,9 +8,7 @@ The *deconst Sphinx preparer* builds [Sphinx documentation](http://sphinx-doc.or
 
 ## Running locally
 
-To run the Sphinx preparer locally, you'll need to install:
-
- * [Docker](https://docs.docker.com/installation/#installation) for your platform.
+To run the Sphinx preparer locally, you'll need to install [Docker](https://docs.docker.com/installation/#installation) for your platform.
 
 Once you have Docker set up, export any desired configuration variables and run `deconst-preparer-sphinx.sh` with the absolute path to any Sphinx-based content repository.
 
