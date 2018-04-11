@@ -8,7 +8,6 @@ import requests
 from deconstrst.builders.serial import DeconstSerialJSONBuilder
 from deconstrst.builders.single import DeconstSingleJSONBuilder
 from sphinx.application import Sphinx
-from sphinx.builders import BUILTIN_BUILDERS
 
 DEFAULT_BUILDER = 'deconst-serial'
 
@@ -19,8 +18,8 @@ def build(srcdir, destdir):
     """
 
     # I am a terrible person
-    BUILTIN_BUILDERS['deconst-serial'] = DeconstSerialJSONBuilder
-    BUILTIN_BUILDERS['deconst-single'] = DeconstSingleJSONBuilder
+    # BUILTIN_BUILDERS['deconst-serial'] = DeconstSerialJSONBuilder
+    # BUILTIN_BUILDERS['deconst-single'] = DeconstSingleJSONBuilder
 
     conf_builder = get_conf_builder(srcdir)
     doctreedir = os.path.join(destdir, '.doctrees')
@@ -33,6 +32,7 @@ def build(srcdir, destdir):
     app.build(True, [])
 
     return app.statuscode
+
 
 def get_conf_builder(srcdir):
     with open(os.path.join(srcdir, 'conf.py'), encoding="utf-8") as conf_file:
@@ -47,3 +47,17 @@ def get_conf_builder(srcdir):
         """
 
     return locals().get('builder', DEFAULT_BUILDER)
+
+
+def setup(app):
+    app.setup_extension('sphinx.builders.html')
+    app.add_builder(DeconstSerialJSONBuilder)
+    app.add_builder(DeconstSingleJSONBuilder)
+    setup(
+        entry_points={
+            'sphinx.builders': [
+                'deconst-serial = DeconstSerialJSONBuilder',
+                'deconst-single = DeconstSingleJSONBuilder',
+            ],
+        }
+    )
