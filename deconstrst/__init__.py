@@ -4,6 +4,7 @@ import os
 import sys
 
 from pip import pip
+from setuptools import setup
 from deconstrst.deconstrst import build, get_conf_builder
 from deconstrst.config import Configuration
 
@@ -87,4 +88,12 @@ def install_requirements():
 
 
 if __name__ == '__main__':
+    setup(
+        entry_points={
+            'sphinx.builders': [
+                'deconst-serial = DeconstSerialJSONBuilder',
+                'deconst-single = DeconstSingleJSONBuilder',
+            ],
+        }
+    )
     main()

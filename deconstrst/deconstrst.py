@@ -5,6 +5,7 @@ import os
 import urllib.parse
 
 import requests
+from setuptools import setup
 from deconstrst.builders.serial import DeconstSerialJSONBuilder
 from deconstrst.builders.single import DeconstSingleJSONBuilder
 from sphinx.application import Sphinx

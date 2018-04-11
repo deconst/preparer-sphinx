@@ -182,3 +182,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                         deconst_config=self.deconst_config,
                         per_page_meta={'deconstunsearchable': True},
                         docwriter=self._publisher.writer)
+
+
+def setup(app):
+    app.add_builder(DeconstSerialJSONBuilder)

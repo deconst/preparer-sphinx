@@ -84,3 +84,7 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
         with open(envelope.serialization_path(), 'w', encoding="utf-8") as f:
             jsonimpl.dump(envelope.serialization_payload(), f)
+
+
+def setup(app):
+    app.add_builder(DeconstSerialJSONBuilder)
