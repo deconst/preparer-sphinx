@@ -13,6 +13,7 @@ from .envelope import Envelope
 
 TOC_DOCNAME = '_toc'
 
+
 class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
     Custom Sphinx builder that generates Deconst-compatible JSON documents.
@@ -87,7 +88,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
         # If this repository has a TOC, reference it as an addenda.
         if self.toc_envelope:
-            envelope.add_addenda('repository_toc', self.toc_envelope.content_id)
+            envelope.add_addenda(
+                'repository_toc', self.toc_envelope.content_id)
 
         self.dump_context(envelope.serialization_payload(),
                           envelope.serialization_path())
@@ -161,8 +163,10 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         if full_render:
             self.secnumbers = self.env.toc_secnumbers.get(docname, {})
             self.fignumbers = self.env.toc_fignumbers.get(docname, {})
-            self.imgpath = relative_uri(self.get_target_uri(docname), '_images')
-            self.dlpath = relative_uri(self.get_target_uri(docname), '_downloads')
+            self.imgpath = relative_uri(
+                self.get_target_uri(docname), '_images')
+            self.dlpath = relative_uri(
+                self.get_target_uri(docname), '_downloads')
             self.current_docname = docname
 
             rendered_toc = self.render_partial(doctree)['body']
@@ -178,3 +182,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                         deconst_config=self.deconst_config,
                         per_page_meta={'deconstunsearchable': True},
                         docwriter=self._publisher.writer)
+
+
+def setup(app):
+    app.add_builder(DeconstSerialJSONBuilder)

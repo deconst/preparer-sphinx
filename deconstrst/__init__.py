@@ -4,6 +4,7 @@ import os
 import sys
 
 from pip import pip
+from setuptools import setup
 from deconstrst.deconstrst import build, get_conf_builder
 from deconstrst.config import Configuration
 
@@ -18,7 +19,8 @@ def main(directory=False):
 
     if config.content_root:
         if directory and directory != config.content_root:
-            print("Warning: Overriding CONTENT_ROOT [{}] with argument [{}].".format(config.content_root, directory))
+            print("Warning: Overriding CONTENT_ROOT [{}] with argument [{}].".format(
+                config.content_root, directory))
         else:
             os.chdir(config.content_root)
     elif directory:
@@ -52,6 +54,7 @@ def main(directory=False):
         print(file=sys.stderr)
         sys.exit(1)
 
+
 def install_requirements():
     """
     Install non-colliding dependencies from a "requirements.txt" file found at
@@ -79,8 +82,18 @@ def install_requirements():
 
             dependencies.append(stripped)
 
-    print("Installing dependencies from {}: {}.".format(reqfile, ', '.join(dependencies)))
+    print("Installing dependencies from {}: {}.".format(
+        reqfile, ', '.join(dependencies)))
     pip.main(['install'] + dependencies)
 
+
 if __name__ == '__main__':
+    setup(
+        entry_points={
+            'sphinx.builders': [
+                'deconst-serial = DeconstSerialJSONBuilder',
+                'deconst-single = DeconstSingleJSONBuilder',
+            ],
+        }
+    )
     main()
