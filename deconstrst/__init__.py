@@ -2,15 +2,15 @@
 
 import os
 import sys
+import subprocess
 
-from pip import pip
 from setuptools import setup
 from deconstrst.deconstrst import build, get_conf_builder
 from deconstrst.config import Configuration
 
 __author__ = 'Ash Wilson'
-__email__ = 'ash.wilson@rackspace.com'
-__version__ = '0.1.0'
+__email__ = '@smashwilson'
+__version__ = '0.2.0'
 
 
 def main(directory=False):
@@ -84,8 +84,7 @@ def install_requirements():
 
     print("Installing dependencies from {}: {}.".format(
         reqfile, ', '.join(dependencies)))
-    pip.main(['install'] + dependencies)
-
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', reqfile])
 
 if __name__ == '__main__':
     setup(
