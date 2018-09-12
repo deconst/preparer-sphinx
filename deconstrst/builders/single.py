@@ -87,4 +87,4 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
 
 def setup(app):
-    app.add_builder(DeconstSerialJSONBuilder)
+    app.add_builder(DeconstSingleJSONBuilder)
