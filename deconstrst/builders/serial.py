@@ -20,7 +20,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
 
     implementation = jsonimpl
-    name = 'deconst'
+    name = 'deconst-serial'
     out_suffix = '.json'
 
     def init(self):

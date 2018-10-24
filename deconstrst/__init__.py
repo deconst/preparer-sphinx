@@ -9,7 +9,7 @@ from deconstrst.deconstrst import build, get_conf_builder
 from deconstrst.config import Configuration
 
 __author__ = 'Ash Wilson'
-__email__ = '@smashwilson'
+__email__ = 'smashwilson@gmail.com'
 __version__ = '0.2.0'
 
 
@@ -71,7 +71,7 @@ def install_requirements():
 
     dependencies = []
 
-    with open(reqfile, 'r', encoding='utf-8') as rf:
+    with open(reqfile, encoding='utf-8') as rf:
         for line in rf:
             if line.startswith('#'):
                 continue
@@ -84,7 +84,7 @@ def install_requirements():
 
     print("Installing dependencies from {}: {}.".format(
         reqfile, ', '.join(dependencies)))
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', reqfile])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', dependencies])
 
 if __name__ == '__main__':
     setup(

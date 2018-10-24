@@ -10,6 +10,7 @@ from deconstrst.builders.serial import DeconstSerialJSONBuilder
 from deconstrst.builders.single import DeconstSingleJSONBuilder
 from sphinx.application import Sphinx
 
+
 DEFAULT_BUILDER = 'deconst-serial'
 
 
