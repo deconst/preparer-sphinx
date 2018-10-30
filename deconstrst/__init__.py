@@ -19,8 +19,8 @@ def main(directory=False):
 
     if config.content_root:
         if directory and directory != config.content_root:
-            print("Warning: Overriding CONTENT_ROOT [{}] with argument [{}].".format(
-                config.content_root, directory))
+            print("Warning: Overriding CONTENT_ROOT [{}] with argument [{}]."
+                  .format(config.content_root, directory))
         else:
             os.chdir(config.content_root)
     elif directory:
@@ -84,7 +84,9 @@ def install_requirements():
 
     print("Installing dependencies from {}: {}.".format(
         reqfile, ', '.join(dependencies)))
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', reqfile])
+    subprocess.check_call(
+        [sys.executable, '-m', 'pip', 'install', '-r', reqfile])
+
 
 if __name__ == '__main__':
     setup(

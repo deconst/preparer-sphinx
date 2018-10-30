@@ -6,6 +6,7 @@ import os
 import io
 import sys
 import traceback
+import deconstrst
 from diff import diff
 from os import path
 from shutil import rmtree
@@ -14,7 +15,6 @@ from termcolor import colored, cprint
 
 sys.path.append(path.join(path.dirname(__file__), '..'))
 
-import deconstrst
 
 TESTCASE_ROOT = path.realpath(path.dirname(__file__))
 

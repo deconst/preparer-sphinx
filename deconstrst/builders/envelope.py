@@ -7,6 +7,7 @@ from os import path
 
 from .common import derive_content_id
 
+
 class Envelope:
     """
     A metadata envelope-in-waiting.
@@ -48,12 +49,12 @@ class Envelope:
     def set_next(self, n):
         if not n:
             return
-        self.next = { 'url': n['link'], 'title': n['title'] }
+        self.next = {'url': n['link'], 'title': n['title']}
 
     def set_previous(self, p):
         if not p:
             return
-        self.previous = { 'url': p['link'], 'title': p['title'] }
+        self.previous = {'url': p['link'], 'title': p['title']}
 
     def add_addenda(self, addenda_name, addenda_content_id):
         if self.addenda is None:
@@ -65,7 +66,8 @@ class Envelope:
         Generate the full path at which this envelope should be serialized.
         """
 
-        envelope_filename = urllib.parse.quote(self.content_id, safe='') + '.json'
+        envelope_filename = urllib.parse.quote(
+            self.content_id, safe='') + '.json'
         return path.join(self.deconst_config.envelope_dir, envelope_filename)
 
     def serialization_payload(self):
@@ -74,7 +76,7 @@ class Envelope:
         of the envelope.
         """
 
-        payload = { 'body': self.body }
+        payload = {'body': self.body}
         if self.title:
             payload['title'] = self.title
         if self.toc:
@@ -117,7 +119,8 @@ class Envelope:
         if self.deconst_config.git_root and self.deconst_config.github_url:
             full_path = path.join(os.getcwd(),
                                   self.builder.env.srcdir,
-                                  self.docname + self.builder.config.source_suffix[0])
+                                  self.docname
+                                  + self.builder.config.source_suffix[0])
 
             edit_segments = [
                 self.deconst_config.github_url,
@@ -126,15 +129,17 @@ class Envelope:
                 path.relpath(full_path, self.builder.env.srcdir)
             ]
 
-            self.meta['github_edit_url'] = '/'.join(segment.strip('/') for segment in edit_segments)
+            self.meta['github_edit_url'] = '/'.join(
+                segment.strip('/') for segment in edit_segments)
 
     def _populate_unsearchable(self):
         """
         Populate "unsearchable" from per-page or repository-wide settings.
         """
 
-        unsearchable = self.per_page_meta.get('deconstunsearchable',
-                                              self.builder.config.deconst_default_unsearchable)
+        unsearchable = self.per_page_meta.get(
+            'deconstunsearchable',
+            self.builder.config.deconst_default_unsearchable)
         if unsearchable is not None:
             self.unsearchable = unsearchable in ('true', True)
 
@@ -144,7 +149,8 @@ class Envelope:
         """
 
         default_layout = self.builder.config.deconst_default_layout
-        self.layout_key = self.per_page_meta.get('deconstlayout', default_layout)
+        self.layout_key = self.per_page_meta.get(
+            'deconstlayout', default_layout)
 
     def _populate_categories(self):
         """

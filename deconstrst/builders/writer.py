@@ -12,6 +12,7 @@ from sphinx.writers.html import HTMLTranslator
 # with a placeholder.
 RE_SRCATTR = re.compile(r"src\s*=\s*\"(X)\"")
 
+
 class OffsetHTMLTranslator(HTMLTranslator):
     """
     Hook Sphinx's HTMLTranslator to track the offsets of image nodes within the
@@ -24,7 +25,8 @@ class OffsetHTMLTranslator(HTMLTranslator):
         self.asset_offsets = defaultdict(list)
 
         dc = self.builder.deconst_config
-        self.asset_src_root = path.realpath('_images') # This is actually hardcoded in StandaloneHTMLBuilder
+        # This is actually hardcoded in StandaloneHTMLBuilder
+        self.asset_src_root = path.realpath('_images')
         self.asset_dest_root = path.realpath(dc.asset_dir)
 
     def visit_image(self, node):
@@ -48,13 +50,16 @@ class OffsetHTMLTranslator(HTMLTranslator):
         chunk = self.body[-1]
         chunk_match = RE_SRCATTR.search(chunk)
         if not chunk_match:
-            msg = "Unable to find image tag placeholder src attribute within [{}]".format(self.body[-1])
+            msg =\
+                "Unable to find image tag placeholder src attribute within \
+                [{}]".format(self.body[-1])
             raise Exception(msg)
 
         chunk_index = len(self.body) - 1
         chunk_offset = chunk_match.start(1)
 
-        self.asset_offsets[asset_rel_path].append(AssetOffset(chunk_index, chunk_offset))
+        self.asset_offsets[asset_rel_path].append(
+            AssetOffset(chunk_index, chunk_offset))
 
     def calculate_offsets(self):
         """
@@ -73,9 +78,11 @@ class OffsetHTMLTranslator(HTMLTranslator):
 
         results = {}
         for (asset_rel_path, asset_offsets) in self.asset_offsets.items():
-            offsets = [chunk_offsets[o.chunk_index] + o.chunk_offset for o in asset_offsets]
+            offsets = [chunk_offsets[o.chunk_index] +
+                       o.chunk_offset for o in asset_offsets]
             results[asset_rel_path] = offsets
         return results
+
 
 class AssetOffset:
     """

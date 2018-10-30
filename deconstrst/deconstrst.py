@@ -2,12 +2,12 @@
 
 import sys
 import os
-import urllib.parse
+# import urllib.parse
 
-import requests
-from setuptools import setup
-from deconstrst.builders.serial import DeconstSerialJSONBuilder
-from deconstrst.builders.single import DeconstSingleJSONBuilder
+# import requests
+# from setuptools import setup
+# from deconstrst.builders.serial import DeconstSerialJSONBuilder
+# from deconstrst.builders.single import DeconstSingleJSONBuilder
 from sphinx.application import Sphinx
 
 DEFAULT_BUILDER = 'deconst-serial'
@@ -50,15 +50,15 @@ def get_conf_builder(srcdir):
     return locals().get('builder', DEFAULT_BUILDER)
 
 
-def setup(app):
-    app.setup_extension('sphinx.builders.html')
-    app.add_builder(DeconstSerialJSONBuilder)
-    app.add_builder(DeconstSingleJSONBuilder)
-    setup(
-        entry_points={
-            'sphinx.builders': [
-                'deconst-serial = DeconstSerialJSONBuilder',
-                'deconst-single = DeconstSingleJSONBuilder',
-            ],
-        }
-    )
+# def setup(app):
+#     app.setup_extension('sphinx.builders.html')
+#     app.add_builder(DeconstSerialJSONBuilder)
+#     app.add_builder(DeconstSingleJSONBuilder)
+#     setup(
+#         entry_points={
+#             'sphinx.builders': [
+#                 'deconst-serial = DeconstSerialJSONBuilder',
+#                 'deconst-single = DeconstSingleJSONBuilder',
+#             ],
+#         }
+#     )

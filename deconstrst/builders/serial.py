@@ -80,7 +80,10 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                             docwriter=self.docwriter)
 
         # Omit the TOC envelope. It's handled in prepare_writing().
-        if self.toc_envelope and envelope.content_id == self.toc_envelope.content_id:
+        # I am not sure the first part of this conditional should
+        # be necesarry
+        if self.toc_envelope and \
+                envelope.content_id == self.toc_envelope.content_id:
             return
 
         envelope.set_next(context.get('next'))
@@ -123,10 +126,13 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         # Identify toctree nodes from the chosen document
         toctrees = []
         for toctreenode in doctree.traverse(addnodes.toctree):
-            toctree = self.env.resolve_toctree(self.config.master_doc, self, toctreenode,
-                                               prune=True,
-                                               includehidden=includehidden,
-                                               maxdepth=0)
+            toctree = self.env.resolve_toctree(
+                self.config.master_doc,
+                self,
+                toctreenode,
+                prune=True,
+                includehidden=includehidden,
+                maxdepth=0)
 
             # Rewrite refuris from this resolved toctree
             for refnode in toctree.traverse(nodes.reference):
@@ -140,7 +146,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                     # Absolute URL
                     continue
 
-                target = "{{ to('" + derive_content_id(self.deconst_config, parts.path) + "') }}"
+                target = "{{ to('"
+                + derive_content_id(self.deconst_config, parts.path) + "') }}"
                 if parts.fragment:
                     target += '#' + parts.fragment
 

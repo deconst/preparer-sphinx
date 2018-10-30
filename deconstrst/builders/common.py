@@ -4,7 +4,7 @@ Code shared between Builder implementations.
 """
 
 import os
-import glob
+# import glob
 from os import path
 
 from deconstrst.config import Configuration
@@ -23,6 +23,7 @@ def init_builder(builder):
     if path.exists('_deconst.json'):
         with open('_deconst.json', 'r', encoding='utf-8') as cf:
             builder.deconst_config.apply_file(cf)
+
 
 def derive_content_id(deconst_config, docname):
     """
