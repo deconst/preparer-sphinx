@@ -20,10 +20,11 @@ ENV PATH /venv/bin:${PATH}
 # and don't complain.
 RUN mkdir -p $HOME/.config/pip
 RUN printf "[global]\ndisable-pip-version-check = True\n" \
-  > $HOME/.config/pip/pip.conf
+    > $HOME/.config/pip/pip.conf
 
 COPY ./requirements.txt /preparer/requirements.txt
-RUN python -m pip install --no-cache-dir -r /preparer/requirements.txt
+RUN  python setup.py install
+# RUN python -m pip install --no-cache-dir -r /preparer/requirements.txt
 # USER root
 # RUN apk del .build-deps
 # USER preparer
