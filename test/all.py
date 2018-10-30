@@ -25,6 +25,7 @@ OK = object()
 FAIL = object()
 ERROR = object()
 
+
 class Testcase:
     """
     A single pair of input and expected output directories.
@@ -35,11 +36,13 @@ class Testcase:
 
         self.src_root = path.join(root, 'src')
         self.expected_root = path.join(root, 'dest')
-        self.expected_envelope_root = path.join(self.expected_root, 'envelopes')
+        self.expected_envelope_root = path.join(
+            self.expected_root, 'envelopes')
         self.expected_asset_root = path.join(self.expected_root, 'assets')
 
         scratch_dir = os.environ.get('SCRATCH_DIR', os.getcwd())
-        self.actual_root = path.join(scratch_dir, 'preparer-test-{}'.format(self.name()))
+        self.actual_root = path.join(
+            scratch_dir, 'preparer-test-{}'.format(self.name()))
         self.actual_envelope_root = path.join(self.actual_root, 'envelopes')
         self.actual_asset_root = path.join(self.actual_root, 'assets')
 
@@ -63,7 +66,7 @@ class Testcase:
         with redirect_stderr(capture):
             with redirect_stdout(capture):
                 try:
-                    deconstrst.main()
+                    deconstrst
                     if self.compare():
                         self.outcome = OK
                         rmtree(self.actual_root)
@@ -75,7 +78,8 @@ class Testcase:
         self.output = capture.getvalue()
 
     def compare(self):
-        expected_envelopes = self.envelope_set_from(self.expected_envelope_root)
+        expected_envelopes = self.envelope_set_from(
+            self.expected_envelope_root)
         expected_assets = self.asset_set_from(self.expected_asset_root)
 
         actual_envelopes = self.envelope_set_from(self.actual_envelope_root)
@@ -119,7 +123,8 @@ class Testcase:
 
         if header:
             report.write('\n')
-            report.write(colored('== Report [{}]'.format(self.name()), attrs=['reverse']))
+            report.write(colored('== Report [{}]'.format(
+                self.name()), attrs=['reverse']))
             report.write('\n')
 
         if output:
