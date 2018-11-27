@@ -6,7 +6,9 @@ import re
 from os import path
 
 from deconstrst.builders.writer import OffsetHTMLTranslator
-from .common import derive_content_id
+from deconstrst.builders.common import derive_content_id
+from deconstrst.config import Configuration
+from sphinx.addnodes import toctree
 
 
 class Envelope:
@@ -36,7 +38,7 @@ class Envelope:
         self.builder = builder
         self.deconst_config = deconst_config
         self.per_page_meta = per_page_meta
-        self.docwriter = OffsetHTMLTranslator(builder, docname)
+        self.docwriter = OffsetHTMLTranslator
 
         self._populate_meta()
         self._populate_git()
@@ -172,7 +174,7 @@ class Envelope:
         Read stored asset offsets from the docwriter.
         """
 
-        self.asset_offsets = self.docwriter.calculate_offsets()
+        self.asset_offsets = self.docwriter.calculate_offsets(self.docwriter)
 
     def _populate_content_id(self):
         """

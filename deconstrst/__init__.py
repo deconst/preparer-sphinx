@@ -44,22 +44,6 @@ def get_dependencies():
 
 def main(directory=False):
 
-    # setup(
-    #     name='deconstrst',
-    #     author='Patrick Kirchhoff',
-    #     author_email='patrick.kirchhoff@rackspace.co.uk',
-    #     description='A sphinx extension.',
-    #     # Package info
-    #     packages=['deconstrst', 'deconstrst.builders'],
-    #     install_requires=get_dependencies(),
-    #     entry_points={
-    #         'sphinx.builders': [
-    #             'deconst-serial = builders.serial:DeconstSerialJSONBuilder',
-    #             'deconst-single = builders.single:DeconstSingleJSONBuilder',
-    #         ]
-    #     }
-    # )
-
     config = Configuration(os.environ)
 
     if config.content_root:

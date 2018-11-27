@@ -66,7 +66,7 @@ class OffsetHTMLTranslator(HTMLTranslator):
         Use the final translator state to compute body offsets for all assets.
         """
 
-        if not self.asset_offsets:
+        if not hasattr(self, 'asset_offsets'):
             return {}
 
         total = 0

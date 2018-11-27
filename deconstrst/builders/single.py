@@ -82,8 +82,8 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
                             toc=local_toc,
                             builder=self,
                             deconst_config=self.deconst_config,
-                            per_page_meta=per_page_meta,
-                            docwriter=OffsetHTMLTranslator())
+                            per_page_meta=per_page_meta)
+        # docwriter=OffsetHTMLTranslator(self, context[]))
 
         with open(envelope.serialization_path(), 'w', encoding="utf-8") as f:
             jsonimpl.dump(envelope.serialization_payload(), f)
