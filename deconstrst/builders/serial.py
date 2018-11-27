@@ -9,6 +9,7 @@ from sphinx.util import jsonimpl
 from sphinx.util.osutil import relative_uri
 from .common import init_builder, derive_content_id
 from .envelope import Envelope
+from deconstrst.builders.writer import OffsetHTMLTranslator
 
 
 TOC_DOCNAME = '_toc'
@@ -20,8 +21,9 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
 
     implementation = jsonimpl
-    name = 'deconst'
+    name = 'deconst-serial'
     out_suffix = '.json'
+    translator_class = OffsetHTMLTranslator
 
     def init(self):
         super().init()
@@ -191,5 +193,5 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                         docwriter=self._publisher.writer)
 
 
-def setup(app):
-    app.add_builder(DeconstSerialJSONBuilder)
+# def setup(app):
+#     app.add_builder(DeconstSerialJSONBuilder)

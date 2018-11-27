@@ -4,19 +4,14 @@ Code shared between Builder implementations.
 """
 
 import os
-# import glob
 from os import path
-
 from deconstrst.config import Configuration
-from deconstrst.builders.writer import OffsetHTMLTranslator
 
 
 def init_builder(builder):
     """
     Common Builder initialization.
     """
-
-    builder.translator_class = OffsetHTMLTranslator
 
     builder.deconst_config = Configuration(os.environ)
 

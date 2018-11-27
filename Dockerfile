@@ -10,27 +10,29 @@ RUN if [[ ! -e /usr/bin/pip ]]; then ln -s /usr/bin/pip3 /usr/bin/pip ; fi && \
 RUN adduser -D -g "" -u 1000 preparer
 RUN mkdir -p /preparer /venv /usr/content-repo
 RUN chown -R preparer:preparer /preparer /venv
-ENV PYTHONPATH /preparer
+# ENV PYTHONPATH /preparer
 
-USER preparer
-RUN python -m venv /venv
-ENV PATH /venv/bin:${PATH}
+# USER preparer
+# RUN python -m venv /venv
+# ENV PATH /venv/bin:${PATH}
 
-# Use the version of pip integrated in this release of Alpine
-# and don't complain.
-RUN mkdir -p $HOME/.config/pip
-RUN printf "[global]\ndisable-pip-version-check = True\n" \
-    > $HOME/.config/pip/pip.conf
+# # Use the version of pip integrated in this release of Alpine
+# # and don't complain.
+# RUN mkdir -p $HOME/.config/pip
+# RUN printf "[global]\ndisable-pip-version-check = True\n" \
+#     > $HOME/.config/pip/pip.conf
 
-COPY ./requirements.txt /preparer/requirements.txt
+# COPY ./requirements.txt /preparer/requirements.txt
+COPY . .
+
 RUN  python setup.py install
 # RUN python -m pip install --no-cache-dir -r /preparer/requirements.txt
 # USER root
 # RUN apk del .build-deps
 # USER preparer
-COPY . /preparer
+# COPY . /preparer
 
-VOLUME /usr/content-repo
-WORKDIR /usr/content-repo
-
-CMD ["python", "-m", "deconstrst"]
+# VOLUME /usr/content-repo
+# WORKDIR /usr/content-repo
+ENTRYPOINT ["python", "-m", "deconstrst"]
+# CMD ["python", "-m", "deconstrst"]

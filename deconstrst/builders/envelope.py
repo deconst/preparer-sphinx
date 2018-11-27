@@ -5,6 +5,7 @@ import urllib
 import re
 from os import path
 
+from deconstrst.builders.writer import OffsetHTMLTranslator
 from .common import derive_content_id
 
 
@@ -14,7 +15,7 @@ class Envelope:
     """
 
     def __init__(self, docname, body, title, toc, builder, deconst_config,
-                 per_page_meta, docwriter):
+                 per_page_meta):
         self.docname = docname
 
         self.body = body
@@ -35,7 +36,7 @@ class Envelope:
         self.builder = builder
         self.deconst_config = deconst_config
         self.per_page_meta = per_page_meta
-        self.docwriter = docwriter
+        self.docwriter = OffsetHTMLTranslator(builder, docname)
 
         self._populate_meta()
         self._populate_git()
@@ -171,7 +172,7 @@ class Envelope:
         Read stored asset offsets from the docwriter.
         """
 
-        self.asset_offsets = self.docwriter.visitor.calculate_offsets()
+        self.asset_offsets = self.docwriter.calculate_offsets()
 
     def _populate_content_id(self):
         """
