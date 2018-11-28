@@ -160,21 +160,6 @@ if len(testcases) == 1:
 summary = '{} testcase{} discovered.'.format(len(testcases), s)
 cprint(summary, attrs=['bold'])
 
-# setup(
-#     name='deconstrst',
-#     author='Patrick Kirchhoff',
-#     author_email='patrick.kirchhoff@rackspace.co.uk',
-#     description='A sphinx extension.',
-#     # Package info
-#     packages=['deconstrst', 'deconstrst.builders'],
-#     install_requires=get_dependencies(),
-#     entry_points={
-#         'sphinx.builders': [
-#             'deconst-serial = builders.serial:DeconstSerialJSONBuilder',
-#             'deconst-single = builders.single:DeconstSingleJSONBuilder',
-#         ]
-#     })
-
 for testcase in testcases:
     cprint('{} .. '.format(testcase.name()), 'cyan', end='')
 
