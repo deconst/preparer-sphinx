@@ -7,7 +7,6 @@ from sphinx.builders.html import SingleFileHTMLBuilder
 from sphinx.util import jsonimpl
 from .envelope import Envelope
 from .common import init_builder
-from deconstrst.builders.writer import OffsetHTMLTranslator
 
 
 class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
@@ -87,7 +86,3 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
 
         with open(envelope.serialization_path(), 'w', encoding="utf-8") as f:
             jsonimpl.dump(envelope.serialization_payload(), f)
-
-
-# def setup(app):
-#     app.add_builder(DeconstSingleJSONBuilder)

@@ -7,8 +7,6 @@ from os import path
 
 from deconstrst.builders.writer import OffsetHTMLTranslator
 from deconstrst.builders.common import derive_content_id
-from deconstrst.config import Configuration
-from sphinx.addnodes import toctree
 
 
 class Envelope:
@@ -17,7 +15,7 @@ class Envelope:
     """
 
     def __init__(self, docname, body, title, toc, builder, deconst_config,
-                 per_page_meta):
+                 per_page_meta, docwriter=OffsetHTMLTranslator):
         self.docname = docname
 
         self.body = body
@@ -38,7 +36,7 @@ class Envelope:
         self.builder = builder
         self.deconst_config = deconst_config
         self.per_page_meta = per_page_meta
-        self.docwriter = OffsetHTMLTranslator
+        self.docwriter = docwriter
 
         self._populate_meta()
         self._populate_git()

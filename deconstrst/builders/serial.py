@@ -78,8 +78,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                             toc=local_toc,
                             builder=self,
                             deconst_config=self.deconst_config,
-                            per_page_meta=per_page_meta,
-                            docwriter=self.docwriter)
+                            per_page_meta=per_page_meta)
+        # docwriter=self.docwriter)
 
         # Omit the TOC envelope. It's handled in prepare_writing().
         # I am not sure the first part of this conditional should
@@ -136,28 +136,34 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                 includehidden=includehidden,
                 maxdepth=0)
 
-            # Rewrite refuris from this resolved toctree
-            for refnode in toctree.traverse(nodes.reference):
-                if 'refuri' not in refnode:
-                    continue
+            if toctree:
+                # Rewrite refuris from this resolved toctree
+                for refnode in toctree.traverse(nodes.reference):
+                    if 'refuri' not in refnode:
+                        continue
 
-                refstr = refnode['refuri']
-                parts = urllib.parse.urlparse(refstr)
+                    refstr = refnode['refuri']
+                    parts = urllib.parse.urlparse(refstr)
 
-                if parts.scheme or parts.netloc:
-                    # Absolute URL
-                    continue
+                    if parts.scheme or parts.netloc:
+                        # Absolute URL
+                        continue
 
-                target = "{{ to('"
-                + derive_content_id(self.deconst_config, parts.path) + "') }}"
-                if parts.fragment:
-                    target += '#' + parts.fragment
+                    # target = "{{ to('"
+                    # + derive_content_id(self.deconst_config, parts.path)
+                    # + "') }}"
+                    target = '{}{}{}'.format(
+                        '{{ to(\'',
+                        derive_content_id(self.deconst_config, parts.path),
+                        '\') }}')
+                    if parts.fragment:
+                        target += '#' + parts.fragment
 
-                refnode['refuri'] = target
+                    refnode['refuri'] = target
 
-            toctreenode.replace_self(toctree)
+                toctreenode.replace_self(toctree)
 
-            toctrees.append(toctree)
+                toctrees.append(toctree)
 
         # No toctree found.
         if not toctrees:
@@ -189,9 +195,5 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                         toc=None,
                         builder=self,
                         deconst_config=self.deconst_config,
-                        per_page_meta={'deconstunsearchable': True},
-                        docwriter=self._publisher.writer)
-
-
-# def setup(app):
-#     app.add_builder(DeconstSerialJSONBuilder)
+                        per_page_meta={'deconstunsearchable': True})
+        # docwriter=self._publisher.writer)
