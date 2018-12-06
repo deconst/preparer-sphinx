@@ -175,7 +175,7 @@ class Envelope:
         """
 
         self.asset_offsets = self.docwriter.calculate_offsets(
-            self.docwriter, self.body)
+            self.docwriter)
 
     def _populate_content_id(self):
         """
