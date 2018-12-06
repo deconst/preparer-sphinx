@@ -96,7 +96,7 @@ class Testcase:
             for filename in filenames:
                 fullpath = path.join(dirpath, filename)
                 try:
-                    with open(fullpath, 'r') as ef:
+                    with open(fullpath, 'r', encoding='utf-8') as ef:
                         envelopes[filename] = json.load(ef)
                 except json.JSONDecodeError:
                     pass

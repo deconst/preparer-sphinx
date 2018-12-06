@@ -2,10 +2,7 @@
 
 import sys
 import os
-# import urllib.parse
 
-# import requests
-# from setuptools import setup
 from deconstrst.builders.serial import DeconstSerialJSONBuilder
 from deconstrst.builders.single import DeconstSingleJSONBuilder
 from sphinx.application import Sphinx
@@ -17,10 +14,6 @@ def build(srcdir, destdir):
     """
     Invoke Sphinx with locked arguments to generate JSON content.
     """
-
-    # I am a terrible person
-    # BUILTIN_BUILDERS['deconst-serial'] = DeconstSerialJSONBuilder
-    # BUILTIN_BUILDERS['deconst-single'] = DeconstSingleJSONBuilder
 
     conf_builder = get_conf_builder(srcdir)
     doctreedir = os.path.join(destdir, '.doctrees')

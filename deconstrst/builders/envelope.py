@@ -68,7 +68,10 @@ class Envelope:
         """
 
         envelope_filename = urllib.parse.quote(
-            self.content_id, safe='') + '.json'
+            self.content_id,
+            safe='',
+            encoding='utf-8',
+            errors='strict') + '.json'
         return path.join(self.deconst_config.envelope_dir, envelope_filename)
 
     def serialization_payload(self):
@@ -100,7 +103,6 @@ class Envelope:
             payload['previous'] = self.previous
         if self.addenda is not None:
             payload['addenda'] = self.addenda
-
         return payload
 
     def _populate_meta(self):
@@ -172,7 +174,8 @@ class Envelope:
         Read stored asset offsets from the docwriter.
         """
 
-        self.asset_offsets = self.docwriter.calculate_offsets(self.docwriter)
+        self.asset_offsets = self.docwriter.calculate_offsets(
+            self.docwriter, self.body)
 
     def _populate_content_id(self):
         """
