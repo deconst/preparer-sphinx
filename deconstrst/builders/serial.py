@@ -28,7 +28,6 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     def init(self):
         super().init()
         init_builder(self)
-
         self.toc_envelope = None
 
     def prepare_writing(self, docnames):
@@ -180,6 +179,7 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
             self.fignumbers = self.env.toc_fignumbers.get(docname, {})
             self.imgpath = relative_uri(
                 self.get_target_uri(docname), '_images')
+            print(f'!!!~~~The image path: {self.imgpath}~~~!!!')
             self.dlpath = relative_uri(
                 self.get_target_uri(docname), '_downloads')
             self.current_docname = docname
