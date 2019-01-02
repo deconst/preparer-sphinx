@@ -57,6 +57,11 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
         Also, the search indices and so on aren't necessary.
         """
+        self.finish_tasks.add_task(self.copy_image_files)
+        self.finish_tasks.add_task(self.copy_download_files)
+        # self.finish_tasks.add_task(self.copy_static_files)
+        self.finish_tasks.add_task(self.copy_extra_files)
+        self.finish_tasks.add_task(self.write_buildinfo)
 
     def write_context(self, context):
         """

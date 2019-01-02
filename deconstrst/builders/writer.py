@@ -5,7 +5,7 @@ import re
 import os
 from os import path
 from collections import defaultdict
-
+# import config
 from sphinx.writers.html import HTMLTranslator
 
 # Regexp to match the source attribute of an <img> tag that's been generated
@@ -34,7 +34,6 @@ class OffsetHTMLTranslator(HTMLTranslator):
         """
         Record the offset for this asset reference.
         """
-
         asset_src_path = path.realpath(node['uri'])
         if asset_src_path.startswith(self.asset_src_root):
             asset_rel_path = path.relpath(asset_src_path, self.asset_src_root)
@@ -60,19 +59,28 @@ class OffsetHTMLTranslator(HTMLTranslator):
         self.asset_offsets[asset_rel_path].append(
             AssetOffset(chunk_index, chunk_offset))
 
-    def calculate_offsets(self, body: str):
+    def calculate_offsets(self, body: str, conf, images):
         """
         Use the final translator state to compute body offsets for all assets.
         """
+
         offset_map = {}
         img_tag_pattern = r'alt=\"(.+)\" src=\"(.+)\"'
         for img_tag in re.finditer(img_tag_pattern, body):
-            # this slice removes the prepended path
-            # local_path = img_tag.group(1)[len('../../_images'):]
             local_path = img_tag.group(1)
-            offset_map[
-                local_path
-            ] = [img_tag.start() + len('alt=\"X\" src=\"')]
+            for image in images:
+                if local_path.endswith(images[image]):
+                    dest_path = image[len('_images/'):]
+                    src_path = image
+                    offset_map[dest_path] = [
+                        img_tag.start() + len('alt=\"X\" src=\"')]
+                    os.makedirs(
+                        path.dirname(
+                            path.join(conf.asset_dir, dest_path)),
+                        exist_ok=True)
+                    shutil.copyfile(src_path, path.join(
+                        conf.asset_dir, dest_path))
+                    break
         subbed = re.subn(img_tag_pattern, 'alt=\"X\" src=\"X\"', body)
         return offset_map, subbed[0]
 

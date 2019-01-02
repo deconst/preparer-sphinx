@@ -173,9 +173,9 @@ class Envelope:
         """
         Read stored asset offsets from the docwriter.
         """
-
         self.asset_offsets, new_body = self.docwriter.calculate_offsets(
-            self.docwriter, self.body)
+            self.docwriter, self.body,
+            self.deconst_config, self.builder.images)
         self.body = new_body
 
     def _populate_content_id(self):
