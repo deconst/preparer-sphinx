@@ -43,3 +43,8 @@ output/*/index.html
 
 _build
 preparer-test-*
+deconstrst/pip-selfcheck.json
+deconstrst/pyvenv.cfg
+
+# Mac stuff
+.DS_Store

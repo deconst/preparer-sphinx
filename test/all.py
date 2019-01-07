@@ -6,6 +6,7 @@ import os
 import io
 import sys
 import traceback
+import deconstrst
 from diff import diff
 from os import path
 from shutil import rmtree
@@ -14,7 +15,6 @@ from termcolor import colored, cprint
 
 sys.path.append(path.join(path.dirname(__file__), '..'))
 
-import deconstrst
 
 TESTCASE_ROOT = path.realpath(path.dirname(__file__))
 
@@ -24,6 +24,7 @@ PENDING = object()
 OK = object()
 FAIL = object()
 ERROR = object()
+
 
 class Testcase:
     """
@@ -35,11 +36,13 @@ class Testcase:
 
         self.src_root = path.join(root, 'src')
         self.expected_root = path.join(root, 'dest')
-        self.expected_envelope_root = path.join(self.expected_root, 'envelopes')
+        self.expected_envelope_root = path.join(
+            self.expected_root, 'envelopes')
         self.expected_asset_root = path.join(self.expected_root, 'assets')
 
         scratch_dir = os.environ.get('SCRATCH_DIR', os.getcwd())
-        self.actual_root = path.join(scratch_dir, 'preparer-test-{}'.format(self.name()))
+        self.actual_root = path.join(
+            scratch_dir, 'preparer-test-{}'.format(self.name()))
         self.actual_envelope_root = path.join(self.actual_root, 'envelopes')
         self.actual_asset_root = path.join(self.actual_root, 'assets')
 
@@ -75,7 +78,8 @@ class Testcase:
         self.output = capture.getvalue()
 
     def compare(self):
-        expected_envelopes = self.envelope_set_from(self.expected_envelope_root)
+        expected_envelopes = self.envelope_set_from(
+            self.expected_envelope_root)
         expected_assets = self.asset_set_from(self.expected_asset_root)
 
         actual_envelopes = self.envelope_set_from(self.actual_envelope_root)
@@ -92,7 +96,7 @@ class Testcase:
             for filename in filenames:
                 fullpath = path.join(dirpath, filename)
                 try:
-                    with open(fullpath, 'r') as ef:
+                    with open(fullpath, 'r', encoding='utf-8') as ef:
                         envelopes[filename] = json.load(ef)
                 except json.JSONDecodeError:
                     pass
@@ -119,7 +123,8 @@ class Testcase:
 
         if header:
             report.write('\n')
-            report.write(colored('== Report [{}]'.format(self.name()), attrs=['reverse']))
+            report.write(colored('== Report [{}]'.format(
+                self.name()), attrs=['reverse']))
             report.write('\n')
 
         if output:

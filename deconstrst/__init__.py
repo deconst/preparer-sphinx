@@ -2,14 +2,44 @@
 
 import os
 import sys
+import subprocess
 
-from pip import pip
+from setuptools import setup
 from deconstrst.deconstrst import build, get_conf_builder
 from deconstrst.config import Configuration
 
 __author__ = 'Ash Wilson'
-__email__ = 'ash.wilson@rackspace.com'
-__version__ = '0.1.0'
+__email__ = '@smashwilson'
+__version__ = '0.2.0'
+
+
+def get_dependencies():
+    """
+    Install non-colliding dependencies from a "requirements.txt" file found at
+    the content root.
+    """
+
+    reqfile = None
+    if os.path.exists('deconst-requirements.txt'):
+        reqfile = 'deconst-requirements.txt'
+    elif os.path.exists('requirements.txt'):
+        reqfile = 'requirements.txt'
+    else:
+        return
+
+    dependencies = []
+
+    with open(reqfile, 'r', encoding='utf-8') as rf:
+        for line in rf:
+            if line.startswith('#'):
+                continue
+
+            stripped = line.strip()
+            if not stripped:
+                continue
+
+            dependencies.append(stripped)
+    return dependencies
 
 
 def main(directory=False):
@@ -18,7 +48,8 @@ def main(directory=False):
 
     if config.content_root:
         if directory and directory != config.content_root:
-            print("Warning: Overriding CONTENT_ROOT [{}] with argument [{}].".format(config.content_root, directory))
+            print("Warning: Overriding CONTENT_ROOT [{}] with argument [{}]."
+                  .format(config.content_root, directory))
         else:
             os.chdir(config.content_root)
     elif directory:
@@ -52,6 +83,7 @@ def main(directory=False):
         print(file=sys.stderr)
         sys.exit(1)
 
+
 def install_requirements():
     """
     Install non-colliding dependencies from a "requirements.txt" file found at
@@ -79,8 +111,7 @@ def install_requirements():
 
             dependencies.append(stripped)
 
-    print("Installing dependencies from {}: {}.".format(reqfile, ', '.join(dependencies)))
-    pip.main(['install'] + dependencies)
-
-if __name__ == '__main__':
-    main()
+    print("Installing dependencies from {}: {}.".format(
+        reqfile, ', '.join(dependencies)))
+    subprocess.check_call(
+        [sys.executable, '-m', 'pip', 'install', '-r', reqfile])

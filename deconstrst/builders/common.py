@@ -4,11 +4,8 @@ Code shared between Builder implementations.
 """
 
 import os
-import glob
 from os import path
-
 from deconstrst.config import Configuration
-from deconstrst.builders.writer import OffsetHTMLTranslator
 
 
 def init_builder(builder):
@@ -16,13 +13,12 @@ def init_builder(builder):
     Common Builder initialization.
     """
 
-    builder.translator_class = OffsetHTMLTranslator
-
     builder.deconst_config = Configuration(os.environ)
 
     if path.exists('_deconst.json'):
         with open('_deconst.json', 'r', encoding='utf-8') as cf:
             builder.deconst_config.apply_file(cf)
+
 
 def derive_content_id(deconst_config, docname):
     """

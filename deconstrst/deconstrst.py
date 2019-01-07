@@ -2,13 +2,11 @@
 
 import sys
 import os
-import urllib.parse
 
-import requests
 from deconstrst.builders.serial import DeconstSerialJSONBuilder
 from deconstrst.builders.single import DeconstSingleJSONBuilder
+from deconstrst.builders.writer import OffsetHTMLTranslator
 from sphinx.application import Sphinx
-from sphinx.builders import BUILTIN_BUILDERS
 
 DEFAULT_BUILDER = 'deconst-serial'
 
@@ -17,10 +15,6 @@ def build(srcdir, destdir):
     """
     Invoke Sphinx with locked arguments to generate JSON content.
     """
-
-    # I am a terrible person
-    BUILTIN_BUILDERS['deconst-serial'] = DeconstSerialJSONBuilder
-    BUILTIN_BUILDERS['deconst-single'] = DeconstSingleJSONBuilder
 
     conf_builder = get_conf_builder(srcdir)
     doctreedir = os.path.join(destdir, '.doctrees')
@@ -33,6 +27,7 @@ def build(srcdir, destdir):
     app.build(True, [])
 
     return app.statuscode
+
 
 def get_conf_builder(srcdir):
     with open(os.path.join(srcdir, 'conf.py'), encoding="utf-8") as conf_file:
@@ -47,3 +42,22 @@ def get_conf_builder(srcdir):
         """
 
     return locals().get('builder', DEFAULT_BUILDER)
+
+
+def builder_init_handler(app: Sphinx):
+    """builder_init_handler reports initialization of a builder.
+
+    Arguments:
+        app {Sphinx} -- the instance of the applicaiton
+    """
+    print('{} successfully initialized.'.format(
+        app.builder.__getattribute__('name')))
+
+
+def setup(app: Sphinx):
+    app.connect('builder-inited', builder_init_handler)
+    app.setup_extension('sphinx.builders.html')
+    app.set_translator('OffsetHTMLTranslator', OffsetHTMLTranslator)
+    app.add_builder(DeconstSerialJSONBuilder)
+    app.add_builder(DeconstSingleJSONBuilder)
+    return {}

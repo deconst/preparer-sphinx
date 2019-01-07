@@ -1,6 +1,6 @@
 {
   "title": "Demonstrating Text Styles",
-  "body": "<div class=\"section\" id=\"demonstrating-text-styles\">\n<h1>Demonstrating Text Styles<a class=\"headerlink\" href=\"#demonstrating-text-styles\" title=\"Permalink to this headline\">¶</a></h1>\n<p>This line includes some <em>italic text</em>.</p>\n<p>This one does some <strong>bolding</strong> for <strong>more emphasis</strong> because <strong>why not</strong>.</p>\n<p>And this line uses <code class=\"docutils literal\"><span class=\"pre\">monospaced</span> <span class=\"pre\">text</span></code>.</p>\n</div>\n",
+  "body": "<div class=\"section\" id=\"demonstrating-text-styles\">\n<h1>Demonstrating Text Styles<a class=\"headerlink\" href=\"#demonstrating-text-styles\" title=\"Permalink to this headline\">¶</a></h1>\n<p>This line includes some <em>italic text</em>.</p>\n<p>This one does some <strong>bolding</strong> for <strong>more emphasis</strong> because <strong>why not</strong>.</p>\n<p>And this line uses <code class=\"docutils literal notranslate\"><span class=\"pre\">monospaced</span> <span class=\"pre\">text</span></code>.</p>\n</div>\n",
   "meta": {},
   "categories": [
     "common category",
@@ -13,7 +13,7 @@
     "url": "../customtitle/"
   },
   "previous": {
-    "title": "Welcome to Serial Builder Test's documentation!",
+    "title": "Welcome to Serial Builder Test\u2019s documentation!",
     "url": "../"
   },
   "addenda": {

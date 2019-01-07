@@ -30,11 +30,13 @@ class Configuration:
 
         self.envelope_dir = env.get("ENVELOPE_DIR", None)
         if not self.envelope_dir:
-            self.envelope_dir = path.join(self.content_root, '_build', 'deconst-envelopes')
+            self.envelope_dir = path.join(
+                self.content_root, '_build', 'deconst-envelopes')
 
         self.asset_dir = env.get("ASSET_DIR", None)
         if not self.asset_dir:
-            self.asset_dir = path.join(self.content_root, '_build', 'deconst-assets')
+            self.asset_dir = path.join(
+                self.content_root, '_build', 'deconst-assets')
 
         self.meta = {}
         self.github_url = ""
@@ -68,7 +70,8 @@ class Configuration:
 
         if "githubUrl" in doc:
             self.github_url = doc["githubUrl"]
-            self.github_issues_url = '/'.join(segment.strip('/') for segment in [doc["githubUrl"], 'issues'])
+            self.github_issues_url = '/'.join(
+                segment.strip('/') for segment in [doc["githubUrl"], 'issues'])
             self.meta.update({'github_issues_url': self.github_issues_url})
 
         if "githubBranch" in doc:
@@ -92,7 +95,7 @@ class Configuration:
     def missing_values(self):
         """
         Determine whether or not the current build should result in the
-        preparation of envelopes. If not, return a list of reasons why it won't.
+        preparation of envelopes. If not, return a list of reasons why.
         """
 
         reasons = []

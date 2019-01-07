@@ -15,10 +15,12 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
     """
 
     name = 'deconst-single'
+    # translator_class = OffsetHTMLTranslator
 
     def init(self):
         super().init()
         init_builder(self)
+        # self.translator_class = OffsetHTMLTranslator(self)
 
     def fix_refuris(self, tree):
         """
@@ -79,8 +81,8 @@ class DeconstSingleJSONBuilder(SingleFileHTMLBuilder):
                             toc=local_toc,
                             builder=self,
                             deconst_config=self.deconst_config,
-                            per_page_meta=per_page_meta,
-                            docwriter=self.docwriter)
+                            per_page_meta=per_page_meta)
+        # docwriter=OffsetHTMLTranslator(self, context[]))
 
         with open(envelope.serialization_path(), 'w', encoding="utf-8") as f:
             jsonimpl.dump(envelope.serialization_payload(), f)

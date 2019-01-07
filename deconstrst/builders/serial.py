@@ -9,9 +9,11 @@ from sphinx.util import jsonimpl
 from sphinx.util.osutil import relative_uri
 from .common import init_builder, derive_content_id
 from .envelope import Envelope
+from deconstrst.builders.writer import OffsetHTMLTranslator
 
 
 TOC_DOCNAME = '_toc'
+
 
 class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
@@ -19,13 +21,13 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
     """
 
     implementation = jsonimpl
-    name = 'deconst'
+    name = 'deconst-serial'
     out_suffix = '.json'
+    translator_class = OffsetHTMLTranslator
 
     def init(self):
         super().init()
         init_builder(self)
-
         self.toc_envelope = None
 
     def prepare_writing(self, docnames):
@@ -55,6 +57,11 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
         Also, the search indices and so on aren't necessary.
         """
+        self.finish_tasks.add_task(self.copy_image_files)
+        self.finish_tasks.add_task(self.copy_download_files)
+        # self.finish_tasks.add_task(self.copy_static_files)
+        self.finish_tasks.add_task(self.copy_extra_files)
+        self.finish_tasks.add_task(self.write_buildinfo)
 
     def write_context(self, context):
         """
@@ -75,11 +82,14 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                             toc=local_toc,
                             builder=self,
                             deconst_config=self.deconst_config,
-                            per_page_meta=per_page_meta,
-                            docwriter=self.docwriter)
+                            per_page_meta=per_page_meta)
+        # docwriter=self.docwriter)
 
         # Omit the TOC envelope. It's handled in prepare_writing().
-        if self.toc_envelope and envelope.content_id == self.toc_envelope.content_id:
+        # I am not sure the first part of this conditional should
+        # be necesarry
+        if self.toc_envelope and \
+                envelope.content_id == self.toc_envelope.content_id:
             return
 
         envelope.set_next(context.get('next'))
@@ -87,7 +97,8 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
 
         # If this repository has a TOC, reference it as an addenda.
         if self.toc_envelope:
-            envelope.add_addenda('repository_toc', self.toc_envelope.content_id)
+            envelope.add_addenda(
+                'repository_toc', self.toc_envelope.content_id)
 
         self.dump_context(envelope.serialization_payload(),
                           envelope.serialization_path())
@@ -121,32 +132,42 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         # Identify toctree nodes from the chosen document
         toctrees = []
         for toctreenode in doctree.traverse(addnodes.toctree):
-            toctree = self.env.resolve_toctree(self.config.master_doc, self, toctreenode,
-                                               prune=True,
-                                               includehidden=includehidden,
-                                               maxdepth=0)
+            toctree = self.env.resolve_toctree(
+                self.config.master_doc,
+                self,
+                toctreenode,
+                prune=True,
+                includehidden=includehidden,
+                maxdepth=0)
 
-            # Rewrite refuris from this resolved toctree
-            for refnode in toctree.traverse(nodes.reference):
-                if 'refuri' not in refnode:
-                    continue
+            if toctree:
+                # Rewrite refuris from this resolved toctree
+                for refnode in toctree.traverse(nodes.reference):
+                    if 'refuri' not in refnode:
+                        continue
 
-                refstr = refnode['refuri']
-                parts = urllib.parse.urlparse(refstr)
+                    refstr = refnode['refuri']
+                    parts = urllib.parse.urlparse(refstr)
 
-                if parts.scheme or parts.netloc:
-                    # Absolute URL
-                    continue
+                    if parts.scheme or parts.netloc:
+                        # Absolute URL
+                        continue
 
-                target = "{{ to('" + derive_content_id(self.deconst_config, parts.path) + "') }}"
-                if parts.fragment:
-                    target += '#' + parts.fragment
+                    # target = "{{ to('"
+                    # + derive_content_id(self.deconst_config, parts.path)
+                    # + "') }}"
+                    target = '{}{}{}'.format(
+                        '{{ to(\'',
+                        derive_content_id(self.deconst_config, parts.path),
+                        '\') }}')
+                    if parts.fragment:
+                        target += '#' + parts.fragment
 
-                refnode['refuri'] = target
+                    refnode['refuri'] = target
 
-            toctreenode.replace_self(toctree)
+                toctreenode.replace_self(toctree)
 
-            toctrees.append(toctree)
+                toctrees.append(toctree)
 
         # No toctree found.
         if not toctrees:
@@ -161,8 +182,11 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
         if full_render:
             self.secnumbers = self.env.toc_secnumbers.get(docname, {})
             self.fignumbers = self.env.toc_fignumbers.get(docname, {})
-            self.imgpath = relative_uri(self.get_target_uri(docname), '_images')
-            self.dlpath = relative_uri(self.get_target_uri(docname), '_downloads')
+            self.imgpath = relative_uri(
+                self.get_target_uri(docname), '_images')
+            print(f'!!!~~~The image path: {self.imgpath}~~~!!!')
+            self.dlpath = relative_uri(
+                self.get_target_uri(docname), '_downloads')
             self.current_docname = docname
 
             rendered_toc = self.render_partial(doctree)['body']
@@ -176,5 +200,5 @@ class DeconstSerialJSONBuilder(JSONHTMLBuilder):
                         toc=None,
                         builder=self,
                         deconst_config=self.deconst_config,
-                        per_page_meta={'deconstunsearchable': True},
-                        docwriter=self._publisher.writer)
+                        per_page_meta={'deconstunsearchable': True})
+        # docwriter=self._publisher.writer)
