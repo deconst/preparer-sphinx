@@ -1,4 +1,6 @@
-# Deconst Sphinx preparer
+# DEPRECATED. Use https://gitlab.com/deconst-next/preparer-sphinx
+
+## Deconst Sphinx preparer
 
 .rst :point_right: :wrench: :point_right: .json
 
